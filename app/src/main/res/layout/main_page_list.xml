@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:id="@+id/mainRelativeLayout"
+    android:background="#f1f1f1"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+        android:id="@+id/progress1"
+        app:mlpb_show_arrow="true"
+        app:mlpb_arrow_height="5dp"
+        app:mlpb_arrow_width="10dp"
+        android:layout_centerInParent="true"
+        app:mlpb_progress_stoke_width="3dp"
+        app:mlpb_progress_color="#566da9"
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:background="#f1f1f1"
+        android:id="@+id/headerRelativeLayout"
+        android:visibility="gone"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#333333"
+            android:text="Shon Prinson"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#333333"
+            android:text="DATE: 26.12.2020"
+            android:textStyle="bold"
+            android:layout_below="@+id/nameTextView"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_centerVertical="true"
+            android:src="@drawable/g"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/barcodeImageView"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_below="@+id/headerRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:padding="2dp"
+        android:queryHint="Search...." />
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:id="@+id/bodyRelativeLayout"
+    android:visibility="gone"
+    android:layout_below="@+id/search_view"
+    android:layout_height="fill_parent">
+    <dapp.com.awok.awokdriversapp.Utils.PullRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/orderListView"
+            android:divider="@color/list_divider"
+            android:dividerHeight="1dp"
+            android:listSelector="@drawable/list_row_selector"
+            android:layout_gravity="center_horizontal" />
+    </dapp.com.awok.awokdriversapp.Utils.PullRefreshLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noOrderTextView"
+        android:text="No Orders for the Day"
+        android:visibility="gone"
+        android:textColor="#cbcbcb"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Please Wait..."
+        android:visibility="visible"
+        android:id="@+id/waitTextView"
+        android:layout_below="@+id/progress1"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

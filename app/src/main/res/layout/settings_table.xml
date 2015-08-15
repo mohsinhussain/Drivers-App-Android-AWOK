@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="75dp"
+        android:layout_margin="20dp"
+        android:id="@+id/imageButton"
+
+        android:src="@drawable/hh"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Settings"
+        android:textStyle="bold"
+        android:textColor="#d92021"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/textView7"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:background="#dddddd"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:background="#FFFFFF"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/txt_freq" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Pull Frequency"
+            android:textColor="#FFFFFF"
+            android:background="#d92021"
+            android:layout_weight="1"
+            android:id="@+id/button3" />
+    </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:background="#dddddd"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:background="#FFFFFF"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/txt_up_freq" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Change Update Interval"
+                android:textColor="#FFFFFF"
+                android:background="#d92021"
+                android:layout_weight="1"
+                android:id="@+id/button_freq" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:background="#dddddd"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:background="#FFFFFF"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="http://dev.alifca.com/d_login.php"
+                    android:id="@+id/txt_server" />
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Change Server"
+                    android:textColor="#FFFFFF"
+                    android:background="#d92021"
+                    android:layout_weight="1"
+                    android:id="@+id/button_server" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:background="#dddddd"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:background="#FFFFFF"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/t_name" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="#FFFFFF"
+                android:background="#d92021"
+                android:layout_weight="1"
+                android:id="@+id/login" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:background="#dddddd"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:background="#FFFFFF"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enable Call Log"
+                    android:padding="10dp"
+                    android:layout_weight="1"
+                    android:id="@+id/textViw5" />
+
+
+                <Switch
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+
+
+                    android:layout_weight="1"
+                    android:thumb="@drawable/thumb"
+                    android:track="@drawable/track"
+
+                    android:id="@+id/switch_cal"
+                    android:checked="false" />
+
+                <!-- <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Enable Call Log"
+                     android:padding="10dp"
+                     android:id="@+id/textViw5" />-->
+            </LinearLayout>
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:background="#dddddd"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:background="#FFFFFF"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/textView4" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Change Password"
+                android:textColor="#FFFFFF"
+                android:background="#d92021"
+                android:layout_weight="1"
+                android:id="@+id/button4" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+
+        android:layout_height="wrap_content">
+
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:id="@+id/switch1"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Offline Logging"
+            android:padding="10dp"
+            android:id="@+id/textView5" />
+    </LinearLayout>
+
+
+
+    <!--<LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+
+        android:layout_height="wrap_content">
+
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:id="@+id/switch_cal"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Call Log"
+            android:padding="10dp"
+            android:id="@+id/textViw5" />
+    </LinearLayout>-->
+
+
+
+
+</LinearLayout>
+
+</LinearLayout>

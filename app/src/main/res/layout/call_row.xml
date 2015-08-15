@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+
+    android:background="@drawable/list_row_selector"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <!--android:descendantFocusability="blocksDescendants"-->
+    <TextView
+        android:id="@+id/phone_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="# 792 920"
+
+
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"/>
+
+    <!-- Rating -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="120dp"
+        android:weightSum="2"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shon Prinson"
+
+            android:layout_weight="1"
+
+
+
+
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="S"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/id"
+        android:layout_alignTop="@+id/order_no"
+
+
+        />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(055) 499-1843"
+        android:layout_weight="1"
+
+
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp" />
+
+    <!-- Genre -->
+
+    <!-- Release Year -->
+
+</RelativeLayout>

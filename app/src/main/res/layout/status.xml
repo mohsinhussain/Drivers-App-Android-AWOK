@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:padding="10dp"
+    android:background="#FFFFFF"
+    android:layout_height="wrap_content"  tools:context=".MainActivity">
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Status to Delivered"
+        android:textColor="#FFFFFF"
+        android:background="#29A329"
+        android:id="@+id/button"
+        />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Status to Postponed"
+        android:layout_marginTop="5dp"
+        android:background="#fe8519"
+        android:textColor="#FFFFFF"
+        android:id="@+id/button2"
+        android:layout_below="@+id/button"
+        />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Status to Canceled"
+        android:background="#d92020"
+        android:layout_marginTop="5dp"
+        android:textColor="#FFFFFF"
+        android:id="@+id/vv"
+        android:layout_below="@+id/button2"
+        />
+</RelativeLayout>

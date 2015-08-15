@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row_selector"
+    android:id="@+id/mainRelativeLayout"
+    >
+
+     <LinearLayout
+         android:layout_width="fill_parent"
+         android:orientation="horizontal"
+         android:background="#c3c3c3"
+         android:id="@+id/categoryLinearLayout"
+         android:visibility="visible"
+         android:layout_height="40dp">
+         <TextView
+             android:id="@+id/categoryTextView"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="# 792 920"
+             android:layout_gravity="center_vertical"
+             android:textStyle="bold"
+             android:textColor="#FFFFFF"
+             android:layout_centerVertical="true"
+             android:layout_marginLeft="20dp"/>
+     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/categoryLinearLayout"
+        android:id="@+id/rowLinearLayout"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:id="@+id/orderNumberTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="# 792 920"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <!-- Rating -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="120dp"
+            android:weightSum="2"
+            android:id="@+id/lol"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shon Prinson"
+                android:layout_weight="1"
+                />
+            <TextView
+                android:id="@+id/phoneTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(055) 499-1843"
+                android:layout_weight="1"
+                android:layout_alignLeft="@+id/name"
+                />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/arrowImageView"
+            android:src="@drawable/hjd"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/phoneImageView"
+            android:scaleType="fitXY"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/dd"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/arrowImageView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="S"
+            android:visibility="invisible"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/id"
+            android:layout_alignTop="@+id/orderNumberTextView"
+            android:layout_toRightOf="@+id/lol"
+
+            />
+
+
+        <!-- Genre -->
+
+        <!-- Release Year -->
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="10dp"
+        android:layout_height="wrap_content"
+        android:background="#333333"
+        android:id="@+id/red"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/categoryLinearLayout" />
+
+</RelativeLayout>
+

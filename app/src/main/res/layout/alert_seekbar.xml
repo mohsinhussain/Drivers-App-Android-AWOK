@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="#FFFFFF"
+    android:layout_height="fill_parent"
+    >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:textColor="#333333"
+        android:text="Please Set a Frequency"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <SeekBar
+        android:id="@+id/volume_bar12"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:thumb="@drawable/seelbar_thumb"
+        android:layout_below="@+id/textView1"
+        android:progressDrawable="@drawable/drawable"
+        />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/volume_bar12"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:textColor="#FFFFFF"
+            android:background="#cd2127"
+            android:id="@+id/done"
+            android:layout_weight="1"
+
+            />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="#FFFFFF"
+            android:background="#cd2127"
+            android:layout_weight="1"
+            android:id="@+id/cancel"
+            />
+
+    </LinearLayout>
+</RelativeLayout>

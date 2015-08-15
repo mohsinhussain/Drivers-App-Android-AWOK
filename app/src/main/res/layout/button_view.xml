@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_marginTop="20dp"
+
+    android:orientation="vertical"
+    android:layout_marginBottom="20dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/hf">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="#CCCCCC"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button android:text="item" android:layout_width="fill_parent"
+            android:background="#6699FF" android:textColor="#FFFFFF" android:textSize="20dp"
+
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"     android:id="@+id/item" />
+
+
+
+        <Button android:text="pr_name" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+            android:background="#FFFFFF" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+            android:layout_below="@+id/item" android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"     android:id="@+id/pr_name" />
+
+
+
+
+
+        <Button android:text="quantity" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+            android:background="#FFFFFF" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+            android:layout_below="@+id/pr_name" android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"     android:id="@+id/quantity" />
+
+
+
+
+
+        <Button android:text="price" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+            android:background="#FFFFFF" android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+            android:layout_below="@+id/quantity" android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"     android:id="@+id/price" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_marginTop="20dp"
+
+
+    android:layout_marginBottom="20dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/hf">
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_marginTop="20dp"
+
+    android:background="#CCCCCC"
+    android:layout_height="wrap_content"
+    android:id="@+id/t1"
+    >
+
+
+    <Button android:text="item" android:layout_width="fill_parent"
+        android:background="#6699FF" android:textColor="#FFFFFF" android:textSize="20dp"
+
+         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="wrap_content"     android:id="@+id/item" />
+
+
+
+    <Button android:text="pr_name" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+        android:background="#FFFFFF" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+        android:layout_below="@+id/item" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="wrap_content"     android:id="@+id/pr_name" />
+
+
+
+
+
+    <Button android:text="quantity" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+        android:background="#FFFFFF" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+        android:layout_below="@+id/pr_name" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="wrap_content"     android:id="@+id/quantity" />
+
+
+
+
+
+    <Button android:text="price" android:layout_width="fill_parent" android:layout_marginTop="10dp"
+        android:background="#FFFFFF" android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+        android:layout_below="@+id/quantity" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="wrap_content"     android:id="@+id/price" />
+
+</RelativeLayout>
+
+</RelativeLayout>-->
