@@ -22,6 +22,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -41,7 +42,7 @@ import dapp.com.awok.awokdriversapp.Activities.OrderDetailActivity;
 import dapp.com.awok.awokdriversapp.Modals.Order;
 import dapp.com.awok.awokdriversapp.R;
 
-public class OrderListViewAdapter extends BaseAdapter implements Filterable {
+public class OrderListViewAdapter extends BaseAdapter  {
 	private Activity activity;
 	private LayoutInflater inflater;
     private Context context;
@@ -54,7 +55,7 @@ public class OrderListViewAdapter extends BaseAdapter implements Filterable {
     Time time;
     String timez;
     List<Order> orderFilterList;
-    ValueFilter valueFilter;
+    //ValueFilter valueFilter;
     String strDate;
 	private List<Order> orderList;
 	public OrderListViewAdapter(Activity activity, List<Order> orderList, Context context) {
@@ -64,8 +65,23 @@ public class OrderListViewAdapter extends BaseAdapter implements Filterable {
 		this.activity = activity;
 		this.orderList = orderList;
         this.context = context;
+
+        
         orderFilterList = orderList;
     }
+
+    /*@Override
+    public boolean onQueryTextSubmit(String query) {
+        searchView.clearFocus();
+        return true;
+//        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        getFilter().filter(newText);
+        return false;
+    }*/
 
 	@Override
 	public int getCount() {
@@ -84,140 +100,123 @@ public class OrderListViewAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.new_listada, null);
-
-        final TextView orderNumberTextView = (TextView) convertView.findViewById(R.id.orderNumberTextView);
-        final TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
-        TextView phoneTextView = (TextView) convertView.findViewById(R.id.phoneTextView);
-        final TextView id = (TextView) convertView.findViewById(R.id.id);
-        final ImageView arrowImageView=(ImageView)convertView.findViewById(R.id.arrowImageView);
-        final ImageView phoneImageView=(ImageView)convertView.findViewById(R.id.phoneImageView);
-        final Button b1=(Button)convertView.findViewById(R.id.red);
-        final LinearLayout categoryLinearLayout=(LinearLayout)convertView.findViewById(R.id.categoryLinearLayout);
-        final TextView categoryTextView=(TextView)convertView.findViewById(R.id.categoryTextView);
-
-        // getting movie data for the row
         Order order = orderList.get(position);
+//        if( (order.getStatus().equalsIgnoreCase("O")&&fragmentPosition==0) || ((order.getStatus().equalsIgnoreCase("S")|| order.getStatus().equalsIgnoreCase("P"))&&fragmentPosition==1) ||
+//                (order.getStatus().equalsIgnoreCase("X")&&fragmentPosition==2) || (order.getStatus().equalsIgnoreCase("F")&&fragmentPosition==3)) {
 
-		// thumbnail image
-/*b1.setTag(m.getStatus());
-        l1.setTag(m.getShow());*/
-        id.setTag(order.getStatus());
-        orderNumberTextView.setText("# " + order.getOrder_no());
-        nameTextView.setText(order.getName());
-        phoneTextView.setText(order.getPhone());
-        phoneImageView.setTag(order.getPhone());
-        id.setText(order.getId());
-        orderNumberTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //getData();
-            }
-        });
-        iv=arrowImageView;
-        if(order.getStatus().equals("F"))
-        {
-            if(order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.jg);
-                phoneImageView.setEnabled(false);
+            if (inflater == null)
+                inflater = (LayoutInflater) activity
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null)
+                convertView = inflater.inflate(R.layout.new_listada, null);
 
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
-                categoryTextView.setText("Delivered");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
-                categoryLinearLayout.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                phoneImageView.setImageResource(R.drawable.jg);
-                phoneImageView.setEnabled(false);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
-                categoryLinearLayout.setVisibility(View.GONE);
-            }
-        }
+            final TextView orderNumberTextView = (TextView) convertView.findViewById(R.id.orderNumberTextView);
+            final TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+            TextView phoneTextView = (TextView) convertView.findViewById(R.id.phoneTextView);
+            final TextView id = (TextView) convertView.findViewById(R.id.id);
+            final ImageView arrowImageView = (ImageView) convertView.findViewById(R.id.arrowImageView);
+            final ImageView phoneImageView = (ImageView) convertView.findViewById(R.id.phoneImageView);
+            final Button b1 = (Button) convertView.findViewById(R.id.red);
+            final LinearLayout categoryLinearLayout = (LinearLayout) convertView.findViewById(R.id.categoryLinearLayout);
+            final TextView categoryTextView = (TextView) convertView.findViewById(R.id.categoryTextView);
 
 
+            id.setTag(order.getStatus());
+            orderNumberTextView.setText("# " + order.getOrder_no());
+            nameTextView.setText(order.getName());
+            phoneTextView.setText(order.getPhone());
+            phoneImageView.setTag(order.getPhone());
+            id.setText(order.getId());
+            orderNumberTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //getData();
+                }
+            });
+            iv = arrowImageView;
+            if (order.getStatus().equals("F")) {
+                if (order.getShow().equals("true")) {
+                    phoneImageView.setImageResource(R.drawable.jg);
+                    phoneImageView.setEnabled(false);
 
-        if(order.getStatus().equals("O"))
-        {
-            if(order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
-                categoryTextView.setText("Pending");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
-                categoryLinearLayout.setVisibility(View.VISIBLE);
+                    categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                    categoryTextView.setText("Delivered");
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                    categoryLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    phoneImageView.setImageResource(R.drawable.jg);
+                    phoneImageView.setEnabled(false);
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                    categoryLinearLayout.setVisibility(View.GONE);
+                }
             }
-            else
-            {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
-                categoryLinearLayout.setVisibility(View.GONE);
-            }
-        }
-
-
-        if(order.getStatus().equals("X"))
-        {
-            if(order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-                categoryTextView.setText("Postponed");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-                categoryLinearLayout.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-                categoryLinearLayout.setVisibility(View.GONE);
-            }
-        }
-
-        if(order.getStatus().equals("S"))
-        {
-            if(order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryTextView.setText("Canceled");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryLinearLayout.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryLinearLayout.setVisibility(View.GONE);
-            }
-        }
 
 
-        if(order.getStatus().equals("P"))
-        {
-            if(order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryTextView.setText("Canceled");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryLinearLayout.setVisibility(View.VISIBLE);
+            if (order.getStatus().equals("O")) {
+                if (order.getShow().equals("true")) {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+                    categoryTextView.setText("Pending");
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+                    categoryLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+                    categoryLinearLayout.setVisibility(View.GONE);
+                }
             }
-            else
-            {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryLinearLayout.setVisibility(View.GONE);
+
+
+            if (order.getStatus().equals("X")) {
+                if (order.getShow().equals("true")) {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+                    categoryTextView.setText("Postponed");
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+                    categoryLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+                    categoryLinearLayout.setVisibility(View.GONE);
+                }
             }
-        }
+
+            if (order.getStatus().equals("S")) {
+                if (order.getShow().equals("true")) {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryTextView.setText("Canceled");
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryLinearLayout.setVisibility(View.GONE);
+                }
+            }
+
+
+            if (order.getStatus().equals("P")) {
+                if (order.getShow().equals("true")) {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryTextView.setText("Canceled");
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    phoneImageView.setImageResource(R.drawable.dd);
+                    phoneImageView.setEnabled(true);
+                    b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                    categoryLinearLayout.setVisibility(View.GONE);
+                }
+            }
 
 //        arrowImageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -239,44 +238,46 @@ public class OrderListViewAdapter extends BaseAdapter implements Filterable {
 //        });
 
 
-        phoneImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            phoneImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                System.out.println("ORDER" + phoneImageView.getTag().toString());
-                System.out.println("ORDER" + orderNumberTextView.getText().toString());
-                CALL_LOG_VALUE = id.getText().toString();
-                CALL_LOG = id.getText().toString();
-                System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
-                store_phone = phoneImageView.getTag().toString();
-                store_user = nameTextView.getText().toString();
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + store_phone));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(callIntent);
+                    System.out.println("ORDER" + phoneImageView.getTag().toString());
+                    System.out.println("ORDER" + orderNumberTextView.getText().toString());
+                    CALL_LOG_VALUE = id.getText().toString();
+                    CALL_LOG = id.getText().toString();
+                    System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
+                    store_phone = phoneImageView.getTag().toString();
+                    store_user = nameTextView.getText().toString();
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + store_phone));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(callIntent);
 
-            }
-        });
+                }
+            });
 
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("ORDER" + phoneImageView.getTag().toString());
-                System.out.println("ORDER" + orderNumberTextView.getText().toString());
-                CALL_LOG_VALUE=id.getText().toString();
-                CALL_LOG=id.getText().toString();
-                System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
-                store_phone=phoneImageView.getTag().toString();
-                store_user=nameTextView.getText().toString();
-                Intent i = new Intent(context,OrderDetailActivity.class);
-                i.putExtra("order_main",id.getText().toString());
-                i.putExtra("display_order_id", orderNumberTextView.getText().toString());
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-            }
-        });
-        return convertView;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("ORDER" + phoneImageView.getTag().toString());
+                    System.out.println("ORDER" + orderNumberTextView.getText().toString());
+                    CALL_LOG_VALUE = id.getText().toString();
+                    CALL_LOG = id.getText().toString();
+                    System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
+                    store_phone = phoneImageView.getTag().toString();
+                    store_user = nameTextView.getText().toString();
+                    Intent i = new Intent(context, OrderDetailActivity.class);
+                    i.putExtra("order_main", id.getText().toString());
+                    i.putExtra("display_order_id", orderNumberTextView.getText().toString());
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
+                }
+            });
+            return convertView;
+//        }
+//        return null;
 	}
 
 
@@ -481,7 +482,7 @@ public class OrderListViewAdapter extends BaseAdapter implements Filterable {
         orderList.clear();
     }
 
-    @Override
+    /*@Override
     public Filter getFilter() {
         if (valueFilter == null) {
             valueFilter = new ValueFilter();
@@ -499,6 +500,7 @@ System.out.println("constraint"+constraint.toString());
                 for (int i = 0; i < orderFilterList.size(); i++) {
                     if ( (orderFilterList.get(i).getOrder_no().toUpperCase() )
                             .contains(constraint.toString().toUpperCase())||(orderFilterList.get(i).getPhone().toUpperCase() )
+                            .contains(constraint.toString().toUpperCase()) || (orderFilterList.get(i).getName().toUpperCase() )
                             .contains(constraint.toString().toUpperCase())) {
 
                         Order country = new Order(orderFilterList.get(i)
@@ -540,7 +542,7 @@ System.out.println("constraint"+constraint.toString());
             notifyDataSetChanged();
         }
 
-    }
+    }*/
 
 
 

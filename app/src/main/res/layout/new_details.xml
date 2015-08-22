@@ -1,53 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_details"
-    android:layout_width="fill_parent" android:layout_height="fill_parent">
-
-    <!--<dapp.com.awok.dapp.ProgressWheel
-        android:id="@+id/progress_wheel"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-android:visibility="gone"
-
-        android:layout_centerInParent="true"
-        wheel:matProg_barColor="#cd2127"
-        wheel:matProg_progressIndeterminate="true" />-->
+    android:id="@+id/mainRelativeLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
         android:id="@+id/progress1"
         app:mlpb_show_arrow="true"
-
-
         app:mlpb_arrow_height="5dp"
         app:mlpb_arrow_width="10dp"
-
-
         android:layout_centerInParent="true"
         app:mlpb_progress_stoke_width="3dp"
         app:mlpb_progress_color="#566da9"
         android:layout_width="70dp"
         android:layout_height="70dp" />
     <ScrollView
-        android:layout_above="@+id/o"
+        android:layout_above="@+id/footerLinearLayout"
         android:layout_marginBottom="10dp"
         android:visibility="gone"
-        android:id="@+id/s_main"
-        android:layout_width="fill_parent" android:layout_height="fill_parent">
-
-        <!--<?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-
+        android:id="@+id/mainScrollView"
         android:layout_width="fill_parent"
-
-        android:layout_height="match_parent" >-->
+        android:layout_height="fill_parent">
 
 
 
         <LinearLayout
-
             android:layout_width="fill_parent" android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -62,19 +40,17 @@ android:visibility="gone"
 
 
                 <Button
-                    android:id="@+id/call_log"
+                    android:id="@+id/callLogButton"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:background="@android:color/transparent"
                     android:layout_marginRight="5dp"
-
-android:text="CALL LOG"
+                    android:text="CALL LOG"
                     android:textColor="#346cc9"
-android:padding="5dp"
-
+                    android:padding="5dp"
                     android:drawablePadding="10dp"
-android:drawableLeft="@drawable/ghfg"
-android:visibility="gone"
+                    android:drawableLeft="@drawable/ghfg"
+                    android:visibility="gone"
 
                     android:layout_alignParentRight="true"/>
 
@@ -146,7 +122,6 @@ android:visibility="gone"
                             android:layout_marginLeft="10dp"
                             android:layout_weight="1"
                             android:gravity="left"
-
                             android:id="@+id/textView" />
 
                         <TextView
@@ -157,19 +132,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="10dp"
                             android:layout_weight="1"
-                            android:id="@+id/order_date" />
-
-                        <!-- <TextView
-                             android:id="@+id/textview_example"
-                             android:layout_width="200dp"
-                             android:layout_height="wrap_content"
-                             android:gravity="center_vertical|right"
-                             android:textColor="#474747"
-                             android:text="ABAGSADGDBAJDHADNA"
-                             android:textSize="14sp" />-->
-
-
-
+                            android:id="@+id/orderDateValueTextView" />
                     </LinearLayout>
 
 
@@ -211,7 +174,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/customer_name" />
+                            android:id="@+id/customerNameValueTextView" />
 
 
 
@@ -259,7 +222,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/mobile" />
+                            android:id="@+id/mobileValueTextView" />
 
 
 
@@ -306,7 +269,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/emirates" />
+                            android:id="@+id/emirateValueTextView" />
 
 
 
@@ -350,7 +313,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/location" />
+                            android:id="@+id/locationValueTextView" />
 
 
 
@@ -394,7 +357,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/address" />
+                            android:id="@+id/addressValueTextView" />
 
 
 
@@ -437,7 +400,7 @@ android:visibility="gone"
                             android:layout_weight="1"
                             android:gravity="left"
 
-                            android:id="@+id/total_price" />
+                            android:id="@+id/totalPriceValueTextView" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -447,7 +410,7 @@ android:visibility="gone"
                             android:gravity="right"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:id="@+id/del_price" />
+                            android:id="@+id/deliveryPriceValueTextView" />
 
 
 
@@ -464,7 +427,7 @@ android:visibility="gone"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_marginTop="20dp"
-android:id="@+id/cardz"
+                android:id="@+id/verificationLinearLayout"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
 
@@ -496,7 +459,6 @@ android:id="@+id/cardz"
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-
                     android:padding="1dp"
                     android:layout_marginTop="1dp"
                     android:gravity="center_vertical"
@@ -523,7 +485,7 @@ android:id="@+id/cardz"
                         android:layout_marginRight="5dp"
                         android:textColor="#FFFFFF"
                         android:layout_weight="1"
-                        android:id="@+id/name_card" />
+                        android:id="@+id/nameOnCardValueTextView" />
 
 
 
@@ -553,7 +515,6 @@ android:id="@+id/cardz"
                         android:textColor="#FFFFFF"
                         android:layout_weight="0.5"
                         android:gravity="left"
-
                         android:id="@+id/twovcjvvcfcbhf" />
 
                     <TextView
@@ -565,7 +526,7 @@ android:id="@+id/cardz"
                         android:textColor="#FFFFFF"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1.5"
-                        android:id="@+id/card_no" />
+                        android:id="@+id/cardNumberValueTextView" />
 
 
 
@@ -601,8 +562,8 @@ android:id="@+id/cardz"
     <LinearLayout
         android:layout_width="fill_parent"
         android:orientation="vertical"
-        android:id="@+id/o"
-android:visibility="gone"
+        android:id="@+id/footerLinearLayout"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
         <LinearLayout
@@ -617,11 +578,9 @@ android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Small Text"
-
                 android:textStyle="bold"
                 android:textColor="#cd2127"
-
-android:gravity="center"
+                android:gravity="center"
                 android:layout_gravity="center"
                 android:id="@+id/textView2"
                  />
@@ -643,7 +602,7 @@ android:gravity="center"
                 android:text="Call Customer"
                 android:background="#31a662"
                 android:padding="5dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:drawableLeft="@drawable/call_white"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
@@ -658,11 +617,11 @@ android:gravity="center"
                 android:padding="5dp"
                 android:background="#ec8618"
                 android:gravity="center"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textColor="#FFFFFF"
                 android:drawableLeft="@drawable/cha"
                 android:layout_weight="1"
-                android:id="@+id/c_status"
+                android:id="@+id/changeStatusButton"
                 />
 
         </LinearLayout>

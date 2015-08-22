@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:gravity="center"
-                    android:text="Please enter admins password to access SETTINGS functionality in application"
+                    android:text="Please enter admins pin to access SETTINGS functionality in application"
                     android:id="@+id/textView3"
                     android:textSize="14sp"
                     android:textColor="#333" />
@@ -73,19 +73,21 @@
                         android:layout_height="wrap_content" android:orientation="vertical">
 
                         <EditText android:id="@+id/edit_pass" android:layout_width="match_parent"
-                            android:layout_height="wrap_content" android:hint="PASSWORD"
+                            android:layout_height="wrap_content" android:hint="PIN"
                             android:imeOptions="actionNext" android:inputType="textPassword"
                             android:maxLines="1" android:singleLine="true"
                             android:layout_marginBottom="10dp"
+                            android:textSize="14sp"
                             android:background="@drawable/gg_edit_text_holo_light"
                             android:textColorHint="#777"
                             android:textColor="#777" />
 
                         <EditText android:id="@+id/confirm_password" android:layout_width="match_parent"
-                            android:layout_height="wrap_content" android:hint="PASSWORD"
+                            android:layout_height="wrap_content" android:hint="PIN"
                             android:imeOptions="actionDone" android:inputType="textPassword"
                             android:maxLines="1" android:singleLine="true"
                             android:layout_marginBottom="10dp"
+                            android:textSize="14sp"
                             android:background="@drawable/gg_edit_text_holo_light"
                             android:textColorHint="#777"
                             android:textColor="#777" />
@@ -99,15 +101,15 @@
                             android:layout_height="wrap_content">
 
                         <Button android:id="@+id/done" style="?android:textAppearanceSmall"
-                            android:layout_width="0dp" android:layout_height="wrap_content"
-                             android:text="DONE"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                             android:text="NEXT"
                             android:layout_weight="1"
                             android:textStyle="bold"
                             android:textColor="#ffffffff"
                             android:background="#d92020" />
 
                             <Button android:id="@+id/cancel" style="?android:textAppearanceSmall"
-                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"
                                 android:text="CANCEL"
                                 android:textStyle="bold"
                                 android:visibility="gone"

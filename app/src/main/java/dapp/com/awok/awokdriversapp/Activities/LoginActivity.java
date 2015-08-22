@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -53,7 +54,7 @@ public class LoginActivity extends Activity {
     JSONObject json;
     String text_zy;
     Button b;
-    TextView ne;
+    TextView ne, signInTextView;
     Button logout;
     String txt_did;
     LinearLayout l1,l2;
@@ -80,6 +81,7 @@ public class LoginActivity extends Activity {
         get_id();
         log=(EditText)findViewById(R.id.email);
         pass=(EditText)findViewById(R.id.password);
+        signInTextView = (TextView) findViewById(R.id.textView2);
         cd = new ConnectionDetector(getApplicationContext());
         p1=(CircleProgressBar)findViewById(R.id.progress1);
         p1.setColorSchemeResources(android.R.color.holo_green_light,android.R.color.holo_orange_light,android.R.color.holo_red_light,android.R.color.holo_blue_dark,android.R.color.holo_purple);
@@ -95,13 +97,6 @@ public class LoginActivity extends Activity {
             }
         });
 
-
-
-
-
-
-
-
         b=(Button)findViewById(R.id.email_sign_in_button);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +108,16 @@ public class LoginActivity extends Activity {
         });
         l1=(LinearLayout)findViewById(R.id.user_status);
         l2=(LinearLayout)findViewById(R.id.ll2);
+
+        pass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((actionId == EditorInfo.IME_ACTION_DONE)) {
+                    check();
+                }
+                return false;
+            }
+        });
+
         getdata();
     }
     public void get_id() {
@@ -125,10 +130,10 @@ public void check()
 {
     if(log.getText().length()==0 || pass.getText().length()==0) {
         if (log.getText().length() == 0) {
-            log.setError("Please Enter User Name");
+            log.setError("PLEASE ENTER USERNAME OR EMAIL");
         }
         if (pass.getText().length() == 0) {
-            pass.setError("Please Enter Password");
+            pass.setError("PLEASE ENTER PASSWORD");
         }
     }
     else
@@ -150,8 +155,7 @@ public void check()
         @Override
         protected String doInBackground(String... paramz) {
             JSONParser jParser=new JSONParser();
-            txt_log=log.getText().toString();
-            txt_pass=pass.getText().toString();
+
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("login", txt_log));
             params.add(new BasicNameValuePair("password", txt_pass));
@@ -172,7 +176,7 @@ public void check()
         protected void onPostExecute(String s) {
             if(product.equals("ude"))
             {
-                Toast.makeText(getApplicationContext(), "User Donot Exist", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "User Does not Exist", Toast.LENGTH_LONG).show();
             }
             else if(product.equals("ip"))
             {
@@ -187,7 +191,7 @@ public void check()
                 try {
                     did=json.getString("did");
                     key=json.getString("key");
-                    name=json.getString("nameTextView");
+                    name=json.getString("name");
                     lname=json.getString("lname");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -196,15 +200,20 @@ public void check()
             }
             p1.setVisibility(View.GONE);
             p.setVisibility(View.GONE);
+            signInTextView.setVisibility(View.VISIBLE);
             super.onPostExecute(s);
         }
 
         @Override
         protected void onPreExecute() {
+
             p1.setVisibility(View.VISIBLE);
             p.setVisibility(View.VISIBLE);
+            signInTextView.setVisibility(View.GONE);
             p1.bringToFront();
             p.bringToFront();
+            txt_log=log.getText().toString();
+            txt_pass=pass.getText().toString();
             super.onPreExecute();
         }
     }
@@ -262,8 +271,6 @@ public void check()
         }
     }
 
-
-
     private class up_off extends AsyncTask<String, String, String>
     {
         @Override
@@ -284,23 +291,16 @@ public void check()
                 {
                     try{
                         JSONParser jParser = new JSONParser();
-
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("DID", txt_did));
                         params.add(new BasicNameValuePair("OFF_LATLON", text.toString()));
-                        params.add(new BasicNameValuePair("action", "location"));
+                        params.add(new BasicNameValuePair("action", "locationValueTextView"));
                         params.add(new BasicNameValuePair("type", "off_data"));
                         params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-                        //off_data=text;
-                        //sea();
-
                         json = jParser.makeHttpRequest(store, "POST", params);
-                        //String cc=json.toString();
-
                         System.out.println("LAT LONghhghfhffffffffffffffffffffffff" + json.toString());
                         latlon = getSharedPreferences(LATLON_PREFS, Context.MODE_PRIVATE);
                         latlon_editor = latlon.edit(); //2
-
                         latlon_editor.clear();
                         latlon_editor.commit();
                     }
@@ -308,9 +308,6 @@ public void check()
                         e.printStackTrace();
                     }
                 }
-
-
-
             }
             else
             {
@@ -324,22 +321,18 @@ public void check()
         protected void onPreExecute() {
             p1.setVisibility(View.VISIBLE);
             p.setVisibility(View.VISIBLE);
+            signInTextView.setVisibility(View.GONE);
             p1.bringToFront();
             p.bringToFront();
-
-
             super.onPreExecute();
         }
 
 
         @Override
         protected void onPostExecute(String s) {
-
-           /* if (pDialog.isShowing())
-                pDialog.dismiss();*/
             p1.setVisibility(View.GONE);
             p.setVisibility(View.GONE);
-
+            signInTextView.setVisibility(View.VISIBLE);
             if (text_zy==null)
             {
                 System.out.println("NO DATA SENT");
@@ -371,11 +364,8 @@ public void check()
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
             super.onPostExecute(s);
         }
     }
-
 }

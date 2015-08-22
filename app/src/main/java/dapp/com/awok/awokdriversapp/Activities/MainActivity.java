@@ -5,27 +5,42 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.util.Base64;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.apache.http.NameValuePair;
@@ -37,6 +52,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dapp.com.awok.awokdriversapp.Adapters.MainSearchAdapter;
 import dapp.com.awok.awokdriversapp.Adapters.OrderListViewAdapter;
 import dapp.com.awok.awokdriversapp.Modals.Order;
 import dapp.com.awok.awokdriversapp.R;
@@ -49,22 +65,22 @@ import dapp.com.awok.awokdriversapp.Utils.PullRefreshLayout;
 /**
  * Created by shon on 4/6/2015.
  */
-public class MainActivity extends Activity implements SearchView.OnQueryTextListener {
+public class MainActivity extends FragmentActivity implements SearchView.OnQueryTextListener{
     private ListView orderListView;
-    private OrderListViewAdapter orderListViewAdapter;
+    private MainSearchAdapter mainSearchAdapter;
     RelativeLayout bodyRelativeLayout,headerRelativeLayout, mainRelativeLayout;
     public static final String PREFS_SWITCH = "APP_SWITCH";
     public static final String PREFS_SWITCH_VALUE = "APP_SWITCH_VALUE";
     SharedPreferences switch_prefs;
     SharedPreferences.Editor switch_editor;
-    PullRefreshLayout pullRefreshLayout;
+//    PullRefreshLayout pullRefreshLayout;
     public static final String PREFS_SWITCH_CALL = "APP_SWITCH_CALL";
     public static final String PREFS_SWITCH_VALUE_CALL = "APP_SWITCH_VALUE_CALL";
     SharedPreferences switch_prefs_call;
     SharedPreferences.Editor switch_editor_call;
     float x1,x2;
     float y1, y2;
-    private List<Order> orderArrayList = new ArrayList<Order>();
+    private ArrayList<Order> orderArrayList = new ArrayList<Order>();
     String data_name,data_date,data_img,txt_pass,txt_did,new_pass,res,txt_fname,txt_lname;
     private int swipe_Max_Distance = 350;
     private static String validate; //= "http://dev.alifca.com/d_login.php";
@@ -79,6 +95,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
     SharedPreferences login_prefs;
     SharedPreferences.Editor login_prefs_editor;
     JSONObject json;
+
 
     public static final String PREFS_NAME = "APP_PREFS";
     public static final String PREFS_SET = "APP_PREFS_SET";
@@ -98,13 +115,89 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
     SharedPreferences.Editor serv_editor;
     String serv_txt;
 
+    // When requested, this adapter returns a DemoObjectFragment,
+    // representing an object in the collection.
+    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
+    ViewPager mViewPager;
+    PagerSlidingTabStrip mTabStrip;
+LinearLayout lay_main_tabstrip;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_page_list);
-        // start tracing to "/sdcard/calc.trace"
-//        Debug.startMethodTracing("calc");
+        lay_main_tabstrip=(LinearLayout)findViewById(R.id.lay_main_tabstrip);
+        mTabStrip = (PagerSlidingTabStrip ) findViewById(R.id.pager_tab_strip);
+        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
+        // ViewPager and its adapters use support library
+        // fragments, so use getSupportFragmentManager.
+        mDemoCollectionPagerAdapter =
+                new DemoCollectionPagerAdapter(
+                        getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+
+//        mTabStrip.setTabIndicatorColor(Color.RED);
+        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+
+        mTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                /*switch (position) {
+                    case 0:
+//                    mTabStrip.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.red));
+                        Log.v("PageViewerAdapter", "position: " + position);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
+                        break;
+
+                    case 1:
+                        Log.v("PageViewerAdapter", "position: " + position);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_red_dark));
+                        break;
+                    case 2:
+                        Log.v("PageViewerAdapter", "position: " + position);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_orange_dark));
+                        break;
+                    case 3:
+                        Log.v("PageViewerAdapter", "position: " + position);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.darker_gray));
+                        break;
+                }*/
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+//                searchView.clearFocus();
+                switch (i) {
+                    case 0:
+//                    mTabStrip.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.red));
+                        Log.v("PageViewerAdapter", "position: " + i);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
+                        break;
+
+                    case 1:
+                        Log.v("PageViewerAdapter", "position: " + i);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_red_dark));
+                        break;
+                    case 2:
+                        Log.v("PageViewerAdapter", "position: " + i);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_orange_dark));
+                        break;
+                    case 3:
+                        Log.v("PageViewerAdapter", "position: " + i);
+                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.darker_gray));
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+        mTabStrip.setViewPager(mViewPager);
         server_pref = getSharedPreferences(PREFS_SERVER_NAME, Context.MODE_PRIVATE);
         serv_txt=server_pref.getString(PREFS_SERVER_VALUE, null);
         if(serv_txt==null)
@@ -115,9 +208,9 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
             serv_editor.commit();
         }
         context=getApplicationContext();
-        orderListView = (ListView) findViewById(R.id.orderListView);
-        orderListViewAdapter = new OrderListViewAdapter(this, orderArrayList,context);
-        orderListView.setAdapter(orderListViewAdapter);
+        orderListView = (ListView ) findViewById(R.id.orderListView);
+        mainSearchAdapter = new MainSearchAdapter(this, orderArrayList,context);
+        orderListView.setAdapter(mainSearchAdapter);
 
         server_pref = getSharedPreferences(PREFS_SERVER_NAME, 0);
         serv_txt=server_pref.getString(PREFS_SERVER_VALUE, null);
@@ -130,22 +223,85 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         progressView.setShowArrow(true);
         noOrderTextView =(TextView)findViewById(R.id.noOrderTextView);
         searchView = (SearchView) findViewById(R.id.search_view);
+
         searchView.setOnQueryTextListener(this);
+//        searchView.setOnCloseListener(this);
+
+        int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeButton = (ImageView) searchView.findViewById(closeButtonId);
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        final TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.clearFocus();
+                searchText.setText("");
+            }
+        });
+
         cd = new ConnectionDetector(MainActivity.this);
         bodyRelativeLayout =(RelativeLayout)findViewById(R.id.bodyRelativeLayout);
         headerRelativeLayout=(RelativeLayout)findViewById(R.id.headerRelativeLayout);
         barcodeImageView =(ImageView)findViewById(R.id.barcodeImageView);
-        pullRefreshLayout = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // start refresh
-                new craz().execute();
-            }
-        });
+//        pullRefreshLayout = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+//        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                // start refresh
+//                new craz().execute();
+//            }
+//        });
         setup();
+
+
         mainRelativeLayout =(RelativeLayout)findViewById(R.id.mainRelativeLayout);
         mainRelativeLayout.setOnTouchListener(new View.OnTouchListener() {
+
+
+            @Override
+            public boolean onTouch(View v, MotionEvent touchevent) {
+
+                switch (touchevent.getAction())
+
+                {
+                    // when user first touches the screen we get x and y coordinate
+                    case MotionEvent.ACTION_DOWN: {
+                        x1 = touchevent.getX();
+                        y1 = touchevent.getY();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        x2 = touchevent.getX();
+                        y2 = touchevent.getY();
+                        if (x1 < x2) {
+                            //      Toast.makeText(MainActivity.this, "Left to Right Swap Performed", Toast.LENGTH_LONG).show();
+                        }
+                        // if right to left sweep event on screen
+                        if (x1 > x2) {
+                            //      Toast.makeText(MainActivity.this, "Right to Left Swap Performed", Toast.LENGTH_LONG).show();
+                        }
+                        // if UP to Down sweep event on screen
+                        if (y1 < y2) {
+                            //     Toast.makeText(MainActivity.this, "UP to Down Swap Performed", Toast.LENGTH_LONG).show();
+                        }
+                        //     / /if Down to UP sweep event on screen
+                        if (y1 > y2) {
+                            //    Toast.makeText(MainActivity.this, "Down to UP Swap Performed", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    }
+                    case MotionEvent.ACTION_POINTER_UP: {
+                        get_data();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+        /*lay_main_tabstrip.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent touchevent) {
 
@@ -185,7 +341,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                 }
                 return false;
             }
-        });
+        });*/
         noOrderTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -196,13 +352,13 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         ImageView g=(ImageView)findViewById(R.id.imageView);
         nameTextView =(TextView)findViewById(R.id.nameTextView);
         dateTextView =(TextView)findViewById(R.id.dateTextView);
-        orderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                get_data();
-                return false;
-            }
-        });
+//        orderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                get_data();
+//                return false;
+//            }
+//        });
         g.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -210,7 +366,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                 return false;
             }
         });
-        orderListView.setOnTouchListener(new View.OnTouchListener() {
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
 
 
             @Override
@@ -262,6 +418,383 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         });
         switch_v();
         switch_cal();
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        searchView.clearFocus();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        if(newText.length()<=0)
+        {
+            orderListView.setVisibility(View.GONE);
+            lay_main_tabstrip.setVisibility(View.VISIBLE);
+            //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            searchView.clearFocus();
+        }
+        else
+        {
+            orderListView.setVisibility(View.VISIBLE);
+            lay_main_tabstrip.setVisibility(View.GONE);
+            mainSearchAdapter.getFilter().filter(newText);
+            //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            //this.getCurrentFocus().clearFocus();
+            //searchView.clearFocus();
+        }
+
+        return false;
+    }
+
+//    @Override
+//    public boolean onClose() {
+//        orderListView.setVisibility(View.GONE);
+//        mViewPager.setVisibility(View.VISIBLE);
+//        searchView.clearFocus();
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        dateTextView.requestFocus();
+//        return false;
+//    }
+    // Since this is an object collection, use a FragmentStatePagerAdapter,
+// and NOT a FragmentPagerAdapter.
+    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        public DemoCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            Fragment fragment = new DemoObjectFragment(orderArrayList);
+            Bundle args = new Bundle();
+            // Our object is just an integer :-P
+            args.putInt(DemoObjectFragment.ARG_OBJECT, i);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+
+            String title = "";
+            switch (position) {
+                case 0:
+                    title = "PENDING";
+                    break;
+
+                case 1:
+                    title =  "CANCELLED";
+                    break;
+                case 2:
+                    title =  "POSTPONED";
+                    break;
+                case 3:
+                    title =  "DELIVERED";
+                    break;
+            }
+            return title;
+        }
+    }
+
+    // Instances of this class are fragments representing a single
+    // object in our collection.
+    public class DemoObjectFragment extends Fragment {
+        public static final String ARG_OBJECT = "object";
+        private ArrayList<Order> orderList;
+        ListView orderListView;
+        PullRefreshLayout pullRefreshLayout;
+        private OrderListViewAdapter orderListViewAdapter;
+        public DemoObjectFragment(){
+
+        };
+        public  DemoObjectFragment(ArrayList<Order> orderList){
+            this.orderList = orderList;
+        }
+
+//        TextView testTextView;
+
+
+        /*@Override
+        public boolean onTouch(View v, MotionEvent event) {
+            // TODO Auto-generated method stub
+            (MainActivity)getActivity().
+            return true;
+        }*/
+
+
+
+
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater,
+                                 ViewGroup container, Bundle savedInstanceState) {
+            // The last two arguments ensure LayoutParams are inflated
+            // properly.
+            View rootView = inflater.inflate(
+                    R.layout.fragment_collection_object, container, false);
+            Bundle args = getArguments();
+            int fragmentPosition = args.getInt(ARG_OBJECT);
+
+            orderListView = (ListView) rootView.findViewById(R.id.orderListView);
+            pullRefreshLayout = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+            orderListView.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent touchevent) /*{
+
+                    if(event.getAction() == MotionEvent.ACTION_MOVE){
+                        //do something
+
+                    }
+                    return true;
+                }*/
+                {
+
+                    switch (touchevent.getAction())
+
+                    {
+                        // when user first touches the screen we get x and y coordinate
+                        case MotionEvent.ACTION_DOWN: {
+                            x1 = touchevent.getX();
+                            y1 = touchevent.getY();
+                            break;
+                        }
+                        case MotionEvent.ACTION_UP: {
+                            x2 = touchevent.getX();
+                            y2 = touchevent.getY();
+                            if (x1 < x2) {
+                                //      Toast.makeText(MainActivity.this, "Left to Right Swap Performed", Toast.LENGTH_LONG).show();
+                            }
+                            // if right to left sweep event on screen
+                            if (x1 > x2) {
+                                //      Toast.makeText(MainActivity.this, "Right to Left Swap Performed", Toast.LENGTH_LONG).show();
+                            }
+                            // if UP to Down sweep event on screen
+                            if (y1 < y2) {
+                                //     Toast.makeText(MainActivity.this, "UP to Down Swap Performed", Toast.LENGTH_LONG).show();
+                            }
+                            //     / /if Down to UP sweep event on screen
+                            if (y1 > y2) {
+                                //    Toast.makeText(MainActivity.this, "Down to UP Swap Performed", Toast.LENGTH_LONG).show();
+                            }
+                            break;
+                        }
+                        case MotionEvent.ACTION_POINTER_UP: {
+                            get_data();
+                            break;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    // start refresh
+                    new craz().execute();
+                }
+            });
+            ArrayList<Order> newList = new ArrayList<Order>();
+            switch (fragmentPosition) {
+                case 0:
+                    for(int i =0;i<orderList.size();i++){
+                        if(orderList.get(i).getStatus().equalsIgnoreCase("O")){
+                            newList.add(orderList.get(i));
+                        }
+                    }
+                    break;
+
+                case 1:
+                    for(int i =0;i<orderList.size();i++){
+                        if(orderList.get(i).getStatus().equalsIgnoreCase("P") || (orderList.get(i).getStatus().equalsIgnoreCase("S"))){
+                            newList.add(orderList.get(i));
+                        }
+                    }
+                    break;
+                case 2:
+                    for(int i =0;i<orderList.size();i++){
+                        if(orderList.get(i).getStatus().equalsIgnoreCase("X")){
+                            newList.add(orderList.get(i));
+                        }
+                    }
+                    break;
+                case 3:
+                    for(int i =0;i<orderList.size();i++){
+                        if(orderList.get(i).getStatus().equalsIgnoreCase("F")){
+                            newList.add(orderList.get(i));
+                        }
+                    }
+                    break;
+            }
+
+//            if( (order.getStatus().equalsIgnoreCase("O")&&fragmentPosition==0) || ((order.getStatus().equalsIgnoreCase("S")|| order.getStatus().equalsIgnoreCase("P"))&&fragmentPosition==1) ||
+//                (order.getStatus().equalsIgnoreCase("X")&&fragmentPosition==2) || (order.getStatus().equalsIgnoreCase("F")&&fragmentPosition==3)) {
+            orderListViewAdapter = new OrderListViewAdapter(getActivity(), newList,getActivity());
+            orderListView.setAdapter(orderListViewAdapter);
+//            ((TextView) rootView.findViewById(R.id.text1)).setText(
+//                    Integer.toString(args.getInt(ARG_OBJECT)));
+            return rootView;
+        }
+
+        private class craz extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... paramz) {
+                Boolean del=true;
+                Boolean pos=true;
+                Boolean can=true;
+                Boolean ma=true;
+                JSONParser jParser = new JSONParser();
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("did",txt_did));
+                params.add(new BasicNameValuePair("action", "list"));
+                params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+                json = jParser.makeHttpRequest(url, "POST", params);
+                System.out.println(json.toString());
+                try {
+
+                    if(json.getString("ORDER_LIST").equals("nodata"))
+                    {
+                        System.out.println("NO_DATA_hggnb");
+                        data_name=json.getString("DRIVER_NAME");
+                        data_date=json.getString("DATE");
+                        System.out.println(data_name.toString());
+                        System.out.println(data_date.toString());
+                    }
+                    else
+                    {
+                        JSONArray ja=json.getJSONArray("ORDER_LIST");
+                        System.out.println(ja.toString());
+//                        orderListViewAdapter.clear();
+                        orderArrayList.clear();
+                        data_name=json.getString("DRIVER_NAME");
+                        data_date=json.getString("DATE");
+                        System.out.println(data_name.toString());
+                        System.out.println(data_date.toString());
+                        for (int i = 0; i < ja.length(); i++) {
+
+                            JSONObject g = ja.getJSONObject(i);
+                            Order LIstDetails = new Order();
+                            LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
+                            LIstDetails.setName(g.getString("USER_NAME"));
+                            LIstDetails.setPhone(g.getString("PHONE"));
+                            LIstDetails.setId(g.getString("ID"));
+                            LIstDetails.setStatus(g.getString("ORDER_STATUS"));
+                            if(g.getString("ORDER_STATUS").equals("F"))
+                            {
+                                if(del)
+                                {
+                                    LIstDetails.setShow("true");
+                                    del=false;
+                                }
+                                else
+                                {
+                                    LIstDetails.setShow("false");
+                                }
+                            }
+                            if(g.getString("ORDER_STATUS").equals("O")) {
+                                if(ma)
+                                {
+                                    LIstDetails.setShow("true");
+                                    ma=false;
+                                }
+                                else
+                                {
+                                    LIstDetails.setShow("false");
+                                }
+                            }
+                            if(g.getString("ORDER_STATUS").equals("P"))
+                            {
+                                if(can)
+                                {
+                                    LIstDetails.setShow("true");
+                                    can=false;
+                                }
+                                else
+                                {
+                                    LIstDetails.setShow("false");
+                                }
+
+                            }
+                            if(g.getString("ORDER_STATUS").equals("S"))
+                            {
+                                if(can)
+                                {
+                                    LIstDetails.setShow("true");
+                                    can=false;
+                                }
+                                else
+                                {
+                                    LIstDetails.setShow("false");
+                                }
+
+                            }
+                            if (g.getString("ORDER_STATUS").equals("X")) {
+                                if(pos)
+                                {
+                                    LIstDetails.setShow("true");
+                                    pos=false;
+                                }
+                                else
+                                {
+                                    LIstDetails.setShow("false");
+                                }
+                            }
+                            System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
+                            orderArrayList.add(LIstDetails);
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                try {
+                    if(json.getString("ORDER_LIST").equals("nodata"))
+                    {
+                        nameTextView.setText(data_name.toString());
+                        dateTextView.setText(data_date.toString());
+                        orderListView.setVisibility(View.GONE);
+                        noOrderTextView.setVisibility(View.VISIBLE);
+
+                    }
+                    else
+                    {
+                        nameTextView.setText(data_name.toString());
+                        dateTextView.setText(data_date.toString());
+                        orderListView.setVisibility(View.VISIBLE);
+                        noOrderTextView.setVisibility(View.GONE);
+
+                    orderListViewAdapter.notifyDataSetChanged();
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                pullRefreshLayout.setRefreshing(false);
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+        }
     }
 
 
@@ -364,12 +897,10 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         text = settings.getString(PREFS_SET, null);
         System.out.println("PREF" + text);
-        if (text==null)
-        {
+        if (text==null) {
             welcome_pass();
         }
-        else
-        {
+        else {
             get_log_data();
         }
     }
@@ -405,8 +936,43 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         dialog.setCancelable(false);
         pass=(EditText)dialog.findViewById(R.id.edit_pass);
         confrmPass=(EditText)dialog.findViewById(R.id.confirm_password);
-        pass.setHint("Enter Password");
-        confrmPass.setHint("Confirm Password");
+        Typeface myFont = Typeface.createFromAsset(getAssets(), "fonts/NotoSans-Regular.ttf");
+        pass.setTypeface(myFont);
+        confrmPass.setTypeface(myFont);
+        pass.setHint("ENTER PIN");
+        confrmPass.setHint("CONFIRM PIN");
+
+        confrmPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((actionId == EditorInfo.IME_ACTION_DONE)) {
+                    new_pass="";
+                    new_pass=pass.getText().toString();
+                    if(new_pass.equals(""))
+                    {
+                        pass.setHint("PLEASE ENTER NEW PIN");
+                    }
+                    else if(confrmPass.getText().toString().equalsIgnoreCase(""))
+                    {
+                        confrmPass.setHint("PLEASE CONFIRM YOUR PIN");
+                    }
+                    else if(!confrmPass.getText().toString().equalsIgnoreCase(pass.getText().toString()))
+                    {
+                        Toast.makeText(MainActivity.this, "Your confirmed PIN does not match initially entered PIN", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        settings = getSharedPreferences(PREFS_NAME, 0); //1
+                        editor = settings.edit(); //2
+                        editor.putString(PREFS_SET, new_pass); //3
+                        editor.commit();
+                        dialog.dismiss();
+                        get_log_data();
+                    }
+                }
+                return false;
+            }
+        });
+
         Button ok=(Button)dialog.findViewById(R.id.done);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -415,15 +981,15 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                 new_pass=pass.getText().toString();
                 if(new_pass.equals(""))
                 {
-                    pass.setHint("Please Enter New Password");
+                    pass.setHint("PLEASE ENTER NEW PIN");
                 }
                 else if(confrmPass.getText().toString().equalsIgnoreCase(""))
                 {
-                    confrmPass.setHint("Please Confirm your Password");
+                    confrmPass.setHint("PLEASE CONFIRM YOUR PIN");
                 }
                 else if(!confrmPass.getText().toString().equalsIgnoreCase(pass.getText().toString()))
                 {
-                    Toast.makeText(MainActivity.this, "Your confirmed password does not match initially entered password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Your confirmed PIN does not match initially entered PIN", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -461,8 +1027,8 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         dialog.setCancelable(false);
         pass=(EditText)dialog.findViewById(R.id.edit_pass);
         confrmPass=(EditText)dialog.findViewById(R.id.confirm_password);
-        pass.setHint("Enter Password");
-        confrmPass.setHint("Confirm Password");
+        pass.setHint("Enter PIN");
+        confrmPass.setHint("Confirm PIN");
         Button ok=(Button)dialog.findViewById(R.id.done);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -470,11 +1036,11 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                 new_pass = "";
                 new_pass = pass.getText().toString();
                 if (new_pass.equals("")) {
-                    pass.setHint("Please Enter New Password");
+                    pass.setHint("Please Enter New PIN");
                 } else if (confrmPass.getText().toString().equalsIgnoreCase("")) {
-                    confrmPass.setHint("Please Confirm your Password");
+                    confrmPass.setHint("Please Confirm your PIN");
                 } else if (!confrmPass.getText().toString().equalsIgnoreCase(pass.getText().toString())) {
-                    Toast.makeText(MainActivity.this, "Your confirmed password does not match initially entered password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Your confirmed PIN does not match initially entered PIN", Toast.LENGTH_SHORT).show();
                 } else {
                     settings = getSharedPreferences(PREFS_NAME, 0); //1
                     editor = settings.edit(); //2
@@ -503,7 +1069,35 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         dialog.setContentView(R.layout.dialog_enter_admin_password);
         dialog.setCanceledOnTouchOutside(false);
         pass=(EditText)dialog.findViewById(R.id.edit_pass);
-        pass.setHint("Enter Password");
+        pass.setHint("ENTER PIN");
+        Typeface myFont = Typeface.createFromAsset(getAssets(), "fonts/NotoSans-Regular.ttf");
+        pass.setTypeface(myFont);
+
+        pass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((actionId == EditorInfo.IME_ACTION_DONE)) {
+                    new_pass="";
+                    new_pass=pass.getText().toString();
+                    settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                    String next = settings.getString(PREFS_SET, null);
+                    System.out.println("PREF" + next);
+                    if (next.equals(new_pass))
+                    {
+                        Intent i=new Intent(MainActivity.this,SettingsActivity.class);
+                        startActivity(i);
+                        dialog.dismiss();
+                    }
+                    else
+                    {
+                        pass.setText("");
+                        pass.setHint("WRONG PIN!! TRY AGAIN.");
+                    }
+                }
+                return false;
+            }
+        });
+
+
         Button ok=(Button)dialog.findViewById(R.id.done);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -522,7 +1116,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                 else
                 {
                     pass.setText("");
-                    pass.setHint("Wrong Password!! Try Again");
+                    pass.setHint("WWRONG PIN!! TRY AGAIN.");
                 }
             }
         });
@@ -536,18 +1130,21 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         dialog.show();
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-//        searchView.clearFocus();
-//        return true;
-        return false;
-    }
+//    @Override
+//    public boolean onQueryTextSubmit(String query) {
+////        searchView.clearFocus();
+////        return true;
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean onQueryTextChange(String newText) {
+////        orderListViewAdapter.getFilter().filter(newText);
+//        return false;
+//    }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        orderListViewAdapter.getFilter().filter(newText);
-        return false;
-    }
+
+
     private class Validate extends AsyncTask<String, Void, String> {
 
         @Override
@@ -738,7 +1335,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                     byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
                     barcodeImageView.setImageBitmap(bitmap);
-                    orderListView.setVisibility(View.GONE);
+//                    orderListView.setVisibility(View.GONE);
                     noOrderTextView.setVisibility(View.VISIBLE);
                 }
                 else
@@ -749,9 +1346,9 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
                     byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
                     barcodeImageView.setImageBitmap(bitmap);
-                    orderListView.setVisibility(View.VISIBLE);
+//                    orderListView.setVisibility(View.VISIBLE);
                     noOrderTextView.setVisibility(View.GONE);
-                    orderListViewAdapter.notifyDataSetChanged();
+//                    orderListViewAdapter.notifyDataSetChanged();
                 }
             }
             catch (Exception e)
@@ -778,152 +1375,5 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
         }
     }
 
-    private class craz extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... paramz) {
-            Boolean del=true;
-            Boolean pos=true;
-            Boolean can=true;
-            Boolean ma=true;
-            JSONParser jParser = new JSONParser();
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("did",txt_did));
-            params.add(new BasicNameValuePair("action", "list"));
-            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-            json = jParser.makeHttpRequest(url, "POST", params);
-            System.out.println(json.toString());
-            try {
-
-                if(json.getString("ORDER_LIST").equals("nodata"))
-                {
-                    System.out.println("NO_DATA_hggnb");
-                    data_name=json.getString("DRIVER_NAME");
-                    data_date=json.getString("DATE");
-                    System.out.println(data_name.toString());
-                    System.out.println(data_date.toString());
-                }
-                else
-                {
-                    JSONArray ja=json.getJSONArray("ORDER_LIST");
-                    System.out.println(ja.toString());
-                    orderListViewAdapter.clear();
-                    data_name=json.getString("DRIVER_NAME");
-                    data_date=json.getString("DATE");
-                    System.out.println(data_name.toString());
-                    System.out.println(data_date.toString());
-                    for (int i = 0; i < ja.length(); i++) {
-
-                        JSONObject g = ja.getJSONObject(i);
-                        Order LIstDetails = new Order();
-                        LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
-                        LIstDetails.setName(g.getString("USER_NAME"));
-                        LIstDetails.setPhone(g.getString("PHONE"));
-                        LIstDetails.setId(g.getString("ID"));
-                        LIstDetails.setStatus(g.getString("ORDER_STATUS"));
-                        if(g.getString("ORDER_STATUS").equals("F"))
-                        {
-                            if(del)
-                            {
-                                LIstDetails.setShow("true");
-                                del=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-                        if(g.getString("ORDER_STATUS").equals("O")) {
-                            if(ma)
-                            {
-                                LIstDetails.setShow("true");
-                                ma=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-                        if(g.getString("ORDER_STATUS").equals("P"))
-                        {
-                            if(can)
-                            {
-                                LIstDetails.setShow("true");
-                                can=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-
-                        }
-                        if(g.getString("ORDER_STATUS").equals("S"))
-                        {
-                            if(can)
-                            {
-                                LIstDetails.setShow("true");
-                                can=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-
-                        }
-                        if (g.getString("ORDER_STATUS").equals("X")) {
-                            if(pos)
-                            {
-                                LIstDetails.setShow("true");
-                                pos=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-                        System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
-                        orderArrayList.add(LIstDetails);
-
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try {
-                if(json.getString("ORDER_LIST").equals("nodata"))
-                {
-                    nameTextView.setText(data_name.toString());
-                    dateTextView.setText(data_date.toString());
-                    orderListView.setVisibility(View.GONE);
-                    noOrderTextView.setVisibility(View.VISIBLE);
-
-                }
-                else
-                {
-                    nameTextView.setText(data_name.toString());
-                    dateTextView.setText(data_date.toString());
-                    orderListView.setVisibility(View.VISIBLE);
-                    noOrderTextView.setVisibility(View.GONE);
-
-                    orderListViewAdapter.notifyDataSetChanged();
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            pullRefreshLayout.setRefreshing(false);
-            super.onPostExecute(s);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-    }
 }
