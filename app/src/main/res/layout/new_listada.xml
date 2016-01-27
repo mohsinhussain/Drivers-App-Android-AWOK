@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_row_selector"
     android:id="@+id/mainRelativeLayout"
+    android:background="#efefef"
     >
 
      <LinearLayout
@@ -11,7 +11,7 @@
          android:orientation="horizontal"
          android:background="#c3c3c3"
          android:id="@+id/categoryLinearLayout"
-         android:visibility="visible"
+         android:visibility="gone"
          android:layout_height="40dp">
          <TextView
              android:id="@+id/categoryTextView"
@@ -30,14 +30,15 @@
         android:gravity="center_vertical"
         android:layout_below="@+id/categoryLinearLayout"
         android:id="@+id/rowLinearLayout"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_centerVertical="true"
+        android:layout_height="80dp">
         <TextView
             android:id="@+id/orderNumberTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="# 792 920"
-            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#000"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"/>
 
@@ -48,7 +49,7 @@
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:layout_marginLeft="120dp"
-            android:weightSum="2"
+            android:weightSum="3"
             android:id="@+id/lol"
             android:orientation="vertical">
             <TextView
@@ -63,6 +64,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="(055) 499-1843"
+                android:layout_weight="1"
+                android:layout_alignLeft="@+id/name"
+                />
+            <TextView
+                android:id="@+id/phoneTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_alignLeft="@+id/name"
                 />
@@ -110,13 +118,12 @@
 
     <Button
         android:layout_width="10dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="#333333"
         android:id="@+id/red"
-        android:layout_alignParentBottom="true"
         android:layout_alignTop="@+id/rowLinearLayout"
         android:layout_alignParentStart="false"
-        android:layout_marginTop="10dp" />
+        android:layout_centerVertical="true"/>
 
 </RelativeLayout>
 

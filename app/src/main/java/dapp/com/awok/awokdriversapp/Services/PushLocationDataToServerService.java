@@ -175,7 +175,7 @@ String text;
                         off_data=text;
                         sea();
 
-                        json = jParser.makeHttpRequest(store, "POST", params);
+//                        json = jParser.makeHttpRequest(store, "POST", params);
                         //String cc=json.toString();
 
                         System.out.println("LAT LONghhghfhffffffffffffffffffffffff" + json.toString());

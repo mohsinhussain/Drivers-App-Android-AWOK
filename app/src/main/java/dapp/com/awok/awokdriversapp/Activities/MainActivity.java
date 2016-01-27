@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -73,7 +74,6 @@ public class MainActivity extends FragmentActivity implements SearchView.OnQuery
     public static final String PREFS_SWITCH_VALUE = "APP_SWITCH_VALUE";
     SharedPreferences switch_prefs;
     SharedPreferences.Editor switch_editor;
-//    PullRefreshLayout pullRefreshLayout;
     public static final String PREFS_SWITCH_CALL = "APP_SWITCH_CALL";
     public static final String PREFS_SWITCH_VALUE_CALL = "APP_SWITCH_VALUE_CALL";
     SharedPreferences switch_prefs_call;
@@ -94,7 +94,7 @@ public class MainActivity extends FragmentActivity implements SearchView.OnQuery
     public static final String APP_LOG_LNAME = "PREFS_APP_LNAME";
     SharedPreferences login_prefs;
     SharedPreferences.Editor login_prefs_editor;
-    JSONObject json;
+    String json;
 
 
     public static final String PREFS_NAME = "APP_PREFS";
@@ -115,8 +115,6 @@ public class MainActivity extends FragmentActivity implements SearchView.OnQuery
     SharedPreferences.Editor serv_editor;
     String serv_txt;
 
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
     DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
     PagerSlidingTabStrip mTabStrip;
@@ -130,47 +128,23 @@ LinearLayout lay_main_tabstrip;
         lay_main_tabstrip=(LinearLayout)findViewById(R.id.lay_main_tabstrip);
         mTabStrip = (PagerSlidingTabStrip ) findViewById(R.id.pager_tab_strip);
         mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
-        // ViewPager and its adapters use support library
-        // fragments, so use getSupportFragmentManager.
         mDemoCollectionPagerAdapter =
                 new DemoCollectionPagerAdapter(
                         getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
-//        mTabStrip.setTabIndicatorColor(Color.RED);
         mViewPager.setAdapter(mDemoCollectionPagerAdapter);
 
         mTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                /*switch (position) {
-                    case 0:
-//                    mTabStrip.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.red));
-                        Log.v("PageViewerAdapter", "position: " + position);
-                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
-                        break;
 
-                    case 1:
-                        Log.v("PageViewerAdapter", "position: " + position);
-                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_red_dark));
-                        break;
-                    case 2:
-                        Log.v("PageViewerAdapter", "position: " + position);
-                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_orange_dark));
-                        break;
-                    case 3:
-                        Log.v("PageViewerAdapter", "position: " + position);
-                        mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.darker_gray));
-                        break;
-                }*/
             }
 
             @Override
             public void onPageSelected(int i) {
-//                searchView.clearFocus();
                 switch (i) {
                     case 0:
-//                    mTabStrip.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.red));
                         Log.v("PageViewerAdapter", "position: " + i);
                         mTabStrip.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
                         break;
@@ -204,7 +178,7 @@ LinearLayout lay_main_tabstrip;
         {
             server_pref = getSharedPreferences(PREFS_SERVER_NAME, 0); //1
             serv_editor = server_pref.edit(); //2
-            serv_editor.putString(PREFS_SERVER_VALUE, "dev.alifca.com"); //3
+            serv_editor.putString(PREFS_SERVER_VALUE, "http://dev.alifca.com/api/drivers/"); //3
             serv_editor.commit();
         }
         context=getApplicationContext();
@@ -214,23 +188,62 @@ LinearLayout lay_main_tabstrip;
 
         server_pref = getSharedPreferences(PREFS_SERVER_NAME, 0);
         serv_txt=server_pref.getString(PREFS_SERVER_VALUE, null);
-        validate="http://"+serv_txt+"/d_login.php";
-        url="http://"+serv_txt+"/d_login.php";
+        validate=serv_txt+"listing/";
+        url=serv_txt+"login/";
 
         pleaseWaitTextView =(TextView)findViewById(R.id.waitTextView);
         progressView =(CircleProgressBar)findViewById(R.id.progress1);
         progressView.setColorSchemeResources(android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light, android.R.color.holo_blue_dark, android.R.color.holo_purple);
         progressView.setShowArrow(true);
         noOrderTextView =(TextView)findViewById(R.id.noOrderTextView);
+
+        final View activityRootView = findViewById(R.id.mainRelativeLayout);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff<100) { // if more than 100 pixels, its probably a keyboard...
+                    int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+                    View searchPlate = searchView.findViewById(searchPlateId);
+                    searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
+//                    System.out.println("Keyboard check called");
+                }
+            }
+        });
+
+
         searchView = (SearchView) findViewById(R.id.search_view);
 
+        final EditText e = (EditText)searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+        e.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+                    View searchPlate = searchView.findViewById(searchPlateId);
+                    if(e.getText().toString().equalsIgnoreCase("")){
+                        searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_red));
+                    }
+                    else{
+                        searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
+                    }
+
+
+                }
+                return false;
+            }
+        });
+//        e.setBackgroundColor(Color.BLACK); //←If you just want a color
+//        e.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
+
         searchView.setOnQueryTextListener(this);
-//        searchView.setOnCloseListener(this);
 
         int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         ImageView closeButton = (ImageView) searchView.findViewById(closeButtonId);
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
+//        searchPlate.setVisibility(View.GONE);
+        searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
         int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         final TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -245,14 +258,6 @@ LinearLayout lay_main_tabstrip;
         bodyRelativeLayout =(RelativeLayout)findViewById(R.id.bodyRelativeLayout);
         headerRelativeLayout=(RelativeLayout)findViewById(R.id.headerRelativeLayout);
         barcodeImageView =(ImageView)findViewById(R.id.barcodeImageView);
-//        pullRefreshLayout = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-//        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                // start refresh
-//                new craz().execute();
-//            }
-//        });
         setup();
 
 
@@ -300,48 +305,7 @@ LinearLayout lay_main_tabstrip;
                 return false;
             }
         });
-        /*lay_main_tabstrip.setOnTouchListener(new View.OnTouchListener() {
 
-            @Override
-            public boolean onTouch(View v, MotionEvent touchevent) {
-
-                switch (touchevent.getAction())
-
-                {
-                    // when user first touches the screen we get x and y coordinate
-                    case MotionEvent.ACTION_DOWN: {
-                        x1 = touchevent.getX();
-                        y1 = touchevent.getY();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        x2 = touchevent.getX();
-                        y2 = touchevent.getY();
-                        if (x1 < x2) {
-                            //         Toast.makeText(MainActivity.this, "Left to Right Swap Performed", Toast.LENGTH_LONG).show();
-                        }
-                        // if right to left sweep event on screen
-                        if (x1 > x2) {
-                            //         Toast.makeText(MainActivity.this, "Right to Left Swap Performed", Toast.LENGTH_LONG).show();
-                        }
-                        // if UP to Down sweep event on screen
-                        if (y1 < y2) {
-                            //      Toast.makeText(MainActivity.this, "UP to Down Swap Performed", Toast.LENGTH_LONG).show();
-                        }
-                        //     / /if Down to UP sweep event on screen
-                        if (y1 > y2) {
-                            //      Toast.makeText(MainActivity.this, "Down to UP Swap Performed", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    }
-                    case MotionEvent.ACTION_POINTER_UP: {
-                        get_data();
-                        break;
-                    }
-                }
-                return false;
-            }
-        });*/
         noOrderTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -352,13 +316,6 @@ LinearLayout lay_main_tabstrip;
         ImageView g=(ImageView)findViewById(R.id.imageView);
         nameTextView =(TextView)findViewById(R.id.nameTextView);
         dateTextView =(TextView)findViewById(R.id.dateTextView);
-//        orderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                get_data();
-//                return false;
-//            }
-//        });
         g.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -424,8 +381,10 @@ LinearLayout lay_main_tabstrip;
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         searchView.clearFocus();
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
         return false;
     }
 
@@ -436,33 +395,24 @@ LinearLayout lay_main_tabstrip;
         {
             orderListView.setVisibility(View.GONE);
             lay_main_tabstrip.setVisibility(View.VISIBLE);
-            //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             searchView.clearFocus();
+            int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+            View searchPlate = searchView.findViewById(searchPlateId);
+            searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
         }
         else
         {
             orderListView.setVisibility(View.VISIBLE);
             lay_main_tabstrip.setVisibility(View.GONE);
             mainSearchAdapter.getFilter().filter(newText);
-            //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            //this.getCurrentFocus().clearFocus();
-            //searchView.clearFocus();
+            int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+            View searchPlate = searchView.findViewById(searchPlateId);
+            searchPlate.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
         }
 
         return false;
     }
 
-//    @Override
-//    public boolean onClose() {
-//        orderListView.setVisibility(View.GONE);
-//        mViewPager.setVisibility(View.VISIBLE);
-//        searchView.clearFocus();
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-//        dateTextView.requestFocus();
-//        return false;
-//    }
-    // Since this is an object collection, use a FragmentStatePagerAdapter,
-// and NOT a FragmentPagerAdapter.
     public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
         public DemoCollectionPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -601,7 +551,7 @@ LinearLayout lay_main_tabstrip;
                 @Override
                 public void onRefresh() {
                     // start refresh
-                    new craz().execute();
+//                    new craz().execute();
                 }
             });
             ArrayList<Order> newList = new ArrayList<Order>();
@@ -639,162 +589,163 @@ LinearLayout lay_main_tabstrip;
 
 //            if( (order.getStatus().equalsIgnoreCase("O")&&fragmentPosition==0) || ((order.getStatus().equalsIgnoreCase("S")|| order.getStatus().equalsIgnoreCase("P"))&&fragmentPosition==1) ||
 //                (order.getStatus().equalsIgnoreCase("X")&&fragmentPosition==2) || (order.getStatus().equalsIgnoreCase("F")&&fragmentPosition==3)) {
-            orderListViewAdapter = new OrderListViewAdapter(getActivity(), newList,getActivity());
+//            orderListViewAdapter = new OrderListViewAdapter(getActivity(), newList,getActivity(),m);
             orderListView.setAdapter(orderListViewAdapter);
 //            ((TextView) rootView.findViewById(R.id.text1)).setText(
 //                    Integer.toString(args.getInt(ARG_OBJECT)));
             return rootView;
         }
 
-        private class craz extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected String doInBackground(String... paramz) {
-                Boolean del=true;
-                Boolean pos=true;
-                Boolean can=true;
-                Boolean ma=true;
-                JSONParser jParser = new JSONParser();
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("did",txt_did));
-                params.add(new BasicNameValuePair("action", "list"));
-                params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-                json = jParser.makeHttpRequest(url, "POST", params);
-                System.out.println(json.toString());
-                try {
-
-                    if(json.getString("ORDER_LIST").equals("nodata"))
-                    {
-                        System.out.println("NO_DATA_hggnb");
-                        data_name=json.getString("DRIVER_NAME");
-                        data_date=json.getString("DATE");
-                        System.out.println(data_name.toString());
-                        System.out.println(data_date.toString());
-                    }
-                    else
-                    {
-                        JSONArray ja=json.getJSONArray("ORDER_LIST");
-                        System.out.println(ja.toString());
-//                        orderListViewAdapter.clear();
-                        orderArrayList.clear();
-                        data_name=json.getString("DRIVER_NAME");
-                        data_date=json.getString("DATE");
-                        System.out.println(data_name.toString());
-                        System.out.println(data_date.toString());
-                        for (int i = 0; i < ja.length(); i++) {
-
-                            JSONObject g = ja.getJSONObject(i);
-                            Order LIstDetails = new Order();
-                            LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
-                            LIstDetails.setName(g.getString("USER_NAME"));
-                            LIstDetails.setPhone(g.getString("PHONE"));
-                            LIstDetails.setId(g.getString("ID"));
-                            LIstDetails.setStatus(g.getString("ORDER_STATUS"));
-                            if(g.getString("ORDER_STATUS").equals("F"))
-                            {
-                                if(del)
-                                {
-                                    LIstDetails.setShow("true");
-                                    del=false;
-                                }
-                                else
-                                {
-                                    LIstDetails.setShow("false");
-                                }
-                            }
-                            if(g.getString("ORDER_STATUS").equals("O")) {
-                                if(ma)
-                                {
-                                    LIstDetails.setShow("true");
-                                    ma=false;
-                                }
-                                else
-                                {
-                                    LIstDetails.setShow("false");
-                                }
-                            }
-                            if(g.getString("ORDER_STATUS").equals("P"))
-                            {
-                                if(can)
-                                {
-                                    LIstDetails.setShow("true");
-                                    can=false;
-                                }
-                                else
-                                {
-                                    LIstDetails.setShow("false");
-                                }
-
-                            }
-                            if(g.getString("ORDER_STATUS").equals("S"))
-                            {
-                                if(can)
-                                {
-                                    LIstDetails.setShow("true");
-                                    can=false;
-                                }
-                                else
-                                {
-                                    LIstDetails.setShow("false");
-                                }
-
-                            }
-                            if (g.getString("ORDER_STATUS").equals("X")) {
-                                if(pos)
-                                {
-                                    LIstDetails.setShow("true");
-                                    pos=false;
-                                }
-                                else
-                                {
-                                    LIstDetails.setShow("false");
-                                }
-                            }
-                            System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
-                            orderArrayList.add(LIstDetails);
-
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                try {
-                    if(json.getString("ORDER_LIST").equals("nodata"))
-                    {
-                        nameTextView.setText(data_name.toString());
-                        dateTextView.setText(data_date.toString());
-                        orderListView.setVisibility(View.GONE);
-                        noOrderTextView.setVisibility(View.VISIBLE);
-
-                    }
-                    else
-                    {
-                        nameTextView.setText(data_name.toString());
-                        dateTextView.setText(data_date.toString());
-                        orderListView.setVisibility(View.VISIBLE);
-                        noOrderTextView.setVisibility(View.GONE);
-
-                    orderListViewAdapter.notifyDataSetChanged();
-                    }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                pullRefreshLayout.setRefreshing(false);
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-        }
+//        private class craz extends AsyncTask<String, Void, String> {
+//
+//            @Override
+//            protected String doInBackground(String... paramz) {
+//                Boolean del=true;
+//                Boolean pos=true;
+//                Boolean can=true;
+//                Boolean ma=true;
+//                JSONParser jParser = new JSONParser();
+//                List<NameValuePair> params = new ArrayList<NameValuePair>();
+//                params.add(new BasicNameValuePair("did",txt_did));
+//                params.add(new BasicNameValuePair("key",txt_pass));
+////                params.add(new BasicNameValuePair("action", "list"));
+////                params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+//                json = jParser.makeHttpRequest(url, "GET", params);
+//                System.out.println(json.toString());
+//                try {
+//
+//                    if(json.getString("ORDER_LIST").equals("nodata"))
+//                    {
+//                        System.out.println("NO_DATA_hggnb");
+//                        data_name=json.getString("DRIVER_NAME");
+//                        data_date=json.getString("DATE");
+//                        System.out.println(data_name.toString());
+//                        System.out.println(data_date.toString());
+//                    }
+//                    else
+//                    {
+//                        JSONArray ja=json.getJSONArray("ORDER_LIST");
+//                        System.out.println(ja.toString());
+////                        orderListViewAdapter.clear();
+//                        orderArrayList.clear();
+//                        data_name=json.getString("DRIVER_NAME");
+//                        data_date=json.getString("DATE");
+//                        System.out.println(data_name.toString());
+//                        System.out.println(data_date.toString());
+//                        for (int i = 0; i < ja.length(); i++) {
+//
+//                            JSONObject g = ja.getJSONObject(i);
+//                            Order LIstDetails = new Order();
+//                            LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
+//                            LIstDetails.setName(g.getString("USER_NAME"));
+//                            LIstDetails.setPhone(g.getString("PHONE"));
+//                            LIstDetails.setId(g.getString("ID"));
+//                            LIstDetails.setStatus(g.getString("ORDER_STATUS"));
+//                            if(g.getString("ORDER_STATUS").equals("F"))
+//                            {
+//                                if(del)
+//                                {
+//                                    LIstDetails.setShow("true");
+//                                    del=false;
+//                                }
+//                                else
+//                                {
+//                                    LIstDetails.setShow("false");
+//                                }
+//                            }
+//                            if(g.getString("ORDER_STATUS").equals("O")) {
+//                                if(ma)
+//                                {
+//                                    LIstDetails.setShow("true");
+//                                    ma=false;
+//                                }
+//                                else
+//                                {
+//                                    LIstDetails.setShow("false");
+//                                }
+//                            }
+//                            if(g.getString("ORDER_STATUS").equals("P"))
+//                            {
+//                                if(can)
+//                                {
+//                                    LIstDetails.setShow("true");
+//                                    can=false;
+//                                }
+//                                else
+//                                {
+//                                    LIstDetails.setShow("false");
+//                                }
+//
+//                            }
+//                            if(g.getString("ORDER_STATUS").equals("S"))
+//                            {
+//                                if(can)
+//                                {
+//                                    LIstDetails.setShow("true");
+//                                    can=false;
+//                                }
+//                                else
+//                                {
+//                                    LIstDetails.setShow("false");
+//                                }
+//
+//                            }
+//                            if (g.getString("ORDER_STATUS").equals("X")) {
+//                                if(pos)
+//                                {
+//                                    LIstDetails.setShow("true");
+//                                    pos=false;
+//                                }
+//                                else
+//                                {
+//                                    LIstDetails.setShow("false");
+//                                }
+//                            }
+//                            System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
+//                            orderArrayList.add(LIstDetails);
+//
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                try {
+//                    if(json.getString("ORDER_LIST").equals("nodata"))
+//                    {
+//                        nameTextView.setText(data_name.toString());
+//                        dateTextView.setText(data_date.toString());
+//                        orderListView.setVisibility(View.GONE);
+//                        noOrderTextView.setVisibility(View.VISIBLE);
+//
+//                    }
+//                    else
+//                    {
+//                        nameTextView.setText(data_name.toString());
+//                        dateTextView.setText(data_date.toString());
+//                        orderListView.setVisibility(View.VISIBLE);
+//                        noOrderTextView.setVisibility(View.GONE);
+//
+//                    orderListViewAdapter.notifyDataSetChanged();
+//                    }
+//                }
+//                catch (Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
+//                pullRefreshLayout.setRefreshing(false);
+//                super.onPostExecute(s);
+//            }
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//            }
+//        }
     }
 
 
@@ -872,6 +823,7 @@ LinearLayout lay_main_tabstrip;
         {
             Intent i=new Intent(MainActivity.this,LoginActivity.class);
             startActivity(i);
+            finish();
         }
         else
         {
@@ -949,18 +901,25 @@ LinearLayout lay_main_tabstrip;
                     new_pass=pass.getText().toString();
                     if(new_pass.equals(""))
                     {
+                        pass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_red));
                         pass.setHint("PLEASE ENTER NEW PIN");
                     }
                     else if(confrmPass.getText().toString().equalsIgnoreCase(""))
                     {
+                        pass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
+                        confrmPass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_red));
                         confrmPass.setHint("PLEASE CONFIRM YOUR PIN");
                     }
                     else if(!confrmPass.getText().toString().equalsIgnoreCase(pass.getText().toString()))
                     {
+                        pass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_red));
+                        confrmPass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_red));
                         Toast.makeText(MainActivity.this, "Your confirmed PIN does not match initially entered PIN", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
+                        pass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
+                        confrmPass.setBackground(getResources().getDrawable(R.drawable.edit_text_border_black));
                         settings = getSharedPreferences(PREFS_NAME, 0); //1
                         editor = settings.edit(); //2
                         editor.putString(PREFS_SET, new_pass); //3
@@ -1158,208 +1117,189 @@ LinearLayout lay_main_tabstrip;
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("did", c_did));
             params.add(new BasicNameValuePair("key", c_key));
-            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-            params.add(new BasicNameValuePair("action", "validate"));
+//            params.add(new BasicNameValuePair("did", "546457"));
+//            params.add(new BasicNameValuePair("key", "gvJeU4Dh9372b18b77b7c704343fc55b2be4577c"));
+//            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+//            params.add(new BasicNameValuePair("action", "validate"));
             System.out.println(c_key);
-            json = jParser.makeHttpRequest(validate, "POST", params);
-    try {
-        res = json.getString("key");
-        System.out.println(res);
-    } catch (JSONException e) {
-        e.printStackTrace();
-    }
-            return null;
+            json = jParser.makeHttpRequest(validate, "GET", params);
+//    try {
+//        res = json.getString("key");
+//        System.out.println(res);
+//    } catch (JSONException e) {
+//        e.printStackTrace();
+//    }
+            return json;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if(res.equals("true"))
-            {
-                startService(new Intent(MainActivity.this,FetchLocationCordinatesService.class));
-                startService(new Intent(MainActivity.this,PushLocationDataToServerService.class));
-                new detail().execute();
-            }
-            else if(res.equals("false"))
-            {
-                login_prefs_editor = login_prefs.edit(); //2
-                login_prefs_editor.clear();
-                login_prefs_editor.commit();
-                Intent i=new Intent(MainActivity.this,LoginActivity.class);
-                startActivity(i);
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "Server Error , Please Try Again", Toast.LENGTH_LONG).show();
-
-            }
-            super.onPostExecute(s);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-    }
-
-
-
-
-    private class detail extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... paramz) {
             Boolean del=true;
             Boolean pos=true;
             Boolean can=true;
             Boolean ma=true;
-            JSONParser jParser = new JSONParser();
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-            params.add(new BasicNameValuePair("did",txt_did));
-            params.add(new BasicNameValuePair("action", "list"));
-            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-
-            json = jParser.makeHttpRequest(url, "POST", params);
-            System.out.println(json.toString());
-
-
+            String message = "";
+            boolean status;
+            JSONObject response;
             try {
-
-                if(json.getString("ORDER_LIST").equals("nodata"))
-                {
-                    System.out.println("NO_DATA_hggnb");
-                    data_name=json.getString("DRIVER_NAME");
-                    data_date=json.getString("DATE");
-                    data_img=json.getString("BARCODE");
-                    System.out.println(data_name.toString());
-                    System.out.println(data_date.toString());
-                }
-                else
-                {
-                    JSONArray ja=json.getJSONArray("ORDER_LIST");
-                    System.out.println(ja.toString());
-                    data_name=json.getString("DRIVER_NAME");
-                    data_date=json.getString("DATE");
-                    data_img=json.getString("BARCODE");
-                    System.out.println(data_name.toString());
-                    System.out.println(data_date.toString());
-                    for (int i = 0; i < ja.length(); i++) {
-                        JSONObject g = ja.getJSONObject(i);
-                        Order LIstDetails = new Order();
-                        LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
-                        LIstDetails.setName(g.getString("USER_NAME"));
-                        LIstDetails.setPhone(g.getString("PHONE"));
-                        LIstDetails.setId(g.getString("ID"));
-                        LIstDetails.setStatus(g.getString("ORDER_STATUS"));
-                        if(g.getString("ORDER_STATUS").equals("F"))
-                        {
-                            if(del)
-                            {
-                                LIstDetails.setShow("true");
-                                del=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-                        if(g.getString("ORDER_STATUS").equals("O")) {
-                            if(ma)
-                            {
-                                LIstDetails.setShow("true");
-                                ma=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-                        if(g.getString("ORDER_STATUS").equals("P"))
-                        {
-                            if(can)
-                            {
-                                LIstDetails.setShow("true");
-                                can=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-
-                        }
-                        if(g.getString("ORDER_STATUS").equals("S"))
-                        {
-                            if(can)
-                            {
-                                LIstDetails.setShow("true");
-                                can=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-
-                        }
-                        if (g.getString("ORDER_STATUS").equals("X")) {
-                            if(pos)
-                            {
-                                LIstDetails.setShow("true");
-                                pos=false;
-                            }
-                            else
-                            {
-                                LIstDetails.setShow("false");
-                            }
-                        }
-
-                        System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
-
-                        orderArrayList.add(LIstDetails);
+                response = new JSONObject(s);
+                status =  response.getBoolean("status");
+                message = response.getString("message");
+                if(status){
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    JSONObject data =  response.getJSONObject("data");
+                    JSONArray orderListingJSONArray = data.getJSONArray("ORDER_LIST");
+                    if(orderListingJSONArray.length()==0)
+                    {
+                        System.out.println("LIST IS EMPTY");
+                        data_name=data.getString("DRIVER_NAME");
+                        data_date=data.getString("DATE");
+                        data_img=data.getString("BARCODE");
+                        System.out.println(data_name.toString());
+                        System.out.println(data_date.toString());
                     }
-                }
+                    else
+                    {
+//                        JSONArray ja=json.getJSONArray("ORDER_LIST");
+                        System.out.println(orderListingJSONArray.toString());
+                        data_name=data.getString("DRIVER_NAME");
+                        data_date=data.getString("DATE");
+                        data_img=data.getString("BARCODE");
+                        System.out.println(data_name.toString());
+                        System.out.println(data_date.toString());
+                        for (int i = 0; i < orderListingJSONArray.length(); i++) {
+                            JSONObject g = orderListingJSONArray.getJSONObject(i);
+                            Order order = new Order();
+                            order.setOrder_no(g.getString("ORDER_NUM"));
+                            order.setName(g.getString("USER_NAME"));
+                            order.setPhone(g.getString("PHONE"));
+                            order.setId(g.getString("ORDER_ID"));
+                            order.setStatus(g.getString("ORDER_STATUS"));
+                            if(g.getString("ORDER_STATUS").equals("F"))
+                            {
+                                if(del)
+                                {
+                                    order.setShow("true");
+                                    del=false;
+                                }
+                                else
+                                {
+                                    order.setShow("false");
+                                }
+                            }
+                            if(g.getString("ORDER_STATUS").equals("O")) {
+                                if(ma)
+                                {
+                                    order.setShow("true");
+                                    ma=false;
+                                }
+                                else
+                                {
+                                    order.setShow("false");
+                                }
+                            }
+                            if(g.getString("ORDER_STATUS").equals("P"))
+                            {
+                                if(can)
+                                {
+                                    order.setShow("true");
+                                    can=false;
+                                }
+                                else
+                                {
+                                    order.setShow("false");
+                                }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+                            }
+                            if(g.getString("ORDER_STATUS").equals("S"))
+                            {
+                                if(can)
+                                {
+                                    order.setShow("true");
+                                    can=false;
+                                }
+                                else
+                                {
+                                    order.setShow("false");
+                                }
 
-        @Override
-        protected void onPostExecute(String s) {
+                            }
+                            if (g.getString("ORDER_STATUS").equals("X")) {
+                                if(pos)
+                                {
+                                    order.setShow("true");
+                                    pos=false;
+                                }
+                                else
+                                {
+                                    order.setShow("false");
+                                }
+                            }
 
-            try {
-                if(json.getString("ORDER_LIST").equals("nodata"))
-                {
-                    nameTextView.setText(data_name.toString());
-                    dateTextView.setText(data_date.toString());
-                    byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-                    barcodeImageView.setImageBitmap(bitmap);
-//                    orderListView.setVisibility(View.GONE);
-                    noOrderTextView.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                            System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
+
+                            orderArrayList.add(order);
+                        }
+                    }
+
                     nameTextView.setText(data_name.toString());
                     dateTextView.setText(data_date.toString());
                     System.out.println("jdhf"+data_img);
                     byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
                     barcodeImageView.setImageBitmap(bitmap);
-//                    orderListView.setVisibility(View.VISIBLE);
+//                orderListView.setVisibility(View.VISIBLE);
                     noOrderTextView.setVisibility(View.GONE);
-//                    orderListViewAdapter.notifyDataSetChanged();
+//                orderListViewAdapter.notifyDataSetChanged();
+
+                    startService(new Intent(MainActivity.this,FetchLocationCordinatesService.class));
+                    startService(new Intent(MainActivity.this,PushLocationDataToServerService.class));
+
                 }
-            }
-            catch (Exception e)
-            {
+                else{
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    login_prefs_editor = login_prefs.edit(); //2
+                    login_prefs_editor.clear();
+                    login_prefs_editor.commit();
+                    Intent i=new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+
+
+
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             progressView.setVisibility(View.GONE);
             pleaseWaitTextView.setVisibility(View.GONE);
             bodyRelativeLayout.setVisibility(View.VISIBLE);
             headerRelativeLayout.setVisibility(View.VISIBLE);
             searchView.setVisibility(View.VISIBLE );
+
+
+
+//            if(res.equals("true"))
+//            {
+//                startService(new Intent(MainActivity.this,FetchLocationCordinatesService.class));
+//                startService(new Intent(MainActivity.this,PushLocationDataToServerService.class));
+//                new detail().execute();
+//            }
+//            else if(res.equals("false"))
+//            {
+//                login_prefs_editor = login_prefs.edit(); //2
+//                login_prefs_editor.clear();
+//                login_prefs_editor.commit();
+//                Intent i=new Intent(MainActivity.this,LoginActivity.class);
+//                startActivity(i);
+//                finish();
+//            }
+//            else
+//            {
+//                Toast.makeText(getApplicationContext(), "Server Error , Please Try Again", Toast.LENGTH_LONG).show();
+//
+//            }
             super.onPostExecute(s);
         }
 
@@ -1374,6 +1314,180 @@ LinearLayout lay_main_tabstrip;
             super.onPreExecute();
         }
     }
+
+
+
+
+//    private class detail extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... paramz) {
+//            Boolean del=true;
+//            Boolean pos=true;
+//            Boolean can=true;
+//            Boolean ma=true;
+//            JSONParser jParser = new JSONParser();
+//            List<NameValuePair> params = new ArrayList<NameValuePair>();
+//
+//            params.add(new BasicNameValuePair("did",txt_did));
+//            params.add(new BasicNameValuePair("action", "list"));
+//            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+//
+//            json = jParser.makeHttpRequest(url, "POST", params);
+//            System.out.println(json.toString());
+//
+//
+//            try {
+//
+//                if(json.getString("ORDER_LIST").equals("nodata"))
+//                {
+//                    System.out.println("NO_DATA_hggnb");
+//                    data_name=json.getString("DRIVER_NAME");
+//                    data_date=json.getString("DATE");
+//                    data_img=json.getString("BARCODE");
+//                    System.out.println(data_name.toString());
+//                    System.out.println(data_date.toString());
+//                }
+//                else
+//                {
+//                    JSONArray ja=json.getJSONArray("ORDER_LIST");
+//                    System.out.println(ja.toString());
+//                    data_name=json.getString("DRIVER_NAME");
+//                    data_date=json.getString("DATE");
+//                    data_img=json.getString("BARCODE");
+//                    System.out.println(data_name.toString());
+//                    System.out.println(data_date.toString());
+//                    for (int i = 0; i < ja.length(); i++) {
+//                        JSONObject g = ja.getJSONObject(i);
+//                        Order LIstDetails = new Order();
+//                        LIstDetails.setOrder_no(g.getString("ORDER_NUM"));
+//                        LIstDetails.setName(g.getString("USER_NAME"));
+//                        LIstDetails.setPhone(g.getString("PHONE"));
+//                        LIstDetails.setId(g.getString("ID"));
+//                        LIstDetails.setStatus(g.getString("ORDER_STATUS"));
+//                        if(g.getString("ORDER_STATUS").equals("F"))
+//                        {
+//                            if(del)
+//                            {
+//                                LIstDetails.setShow("true");
+//                                del=false;
+//                            }
+//                            else
+//                            {
+//                                LIstDetails.setShow("false");
+//                            }
+//                        }
+//                        if(g.getString("ORDER_STATUS").equals("O")) {
+//                            if(ma)
+//                            {
+//                                LIstDetails.setShow("true");
+//                                ma=false;
+//                            }
+//                            else
+//                            {
+//                                LIstDetails.setShow("false");
+//                            }
+//                        }
+//                        if(g.getString("ORDER_STATUS").equals("P"))
+//                        {
+//                            if(can)
+//                            {
+//                                LIstDetails.setShow("true");
+//                                can=false;
+//                            }
+//                            else
+//                            {
+//                                LIstDetails.setShow("false");
+//                            }
+//
+//                        }
+//                        if(g.getString("ORDER_STATUS").equals("S"))
+//                        {
+//                            if(can)
+//                            {
+//                                LIstDetails.setShow("true");
+//                                can=false;
+//                            }
+//                            else
+//                            {
+//                                LIstDetails.setShow("false");
+//                            }
+//
+//                        }
+//                        if (g.getString("ORDER_STATUS").equals("X")) {
+//                            if(pos)
+//                            {
+//                                LIstDetails.setShow("true");
+//                                pos=false;
+//                            }
+//                            else
+//                            {
+//                                LIstDetails.setShow("false");
+//                            }
+//                        }
+//
+//                        System.out.println("gnvnvnvf" + g.getString("ORDER_STATUS"));
+//
+//                        orderArrayList.add(LIstDetails);
+//                    }
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//
+//            try {
+//                if(json.getString("ORDER_LIST").equals("nodata"))
+//                {
+//                    nameTextView.setText(data_name.toString());
+//                    dateTextView.setText(data_date.toString());
+//                    byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+//                    barcodeImageView.setImageBitmap(bitmap);
+////                    orderListView.setVisibility(View.GONE);
+//                    noOrderTextView.setVisibility(View.VISIBLE);
+//                }
+//                else
+//                {
+//                    nameTextView.setText(data_name.toString());
+//                    dateTextView.setText(data_date.toString());
+//                    System.out.println("jdhf"+data_img);
+//                    byte[] imageAsBytes = Base64.decode(data_img.getBytes(), Base64.DEFAULT);
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+//                    barcodeImageView.setImageBitmap(bitmap);
+////                    orderListView.setVisibility(View.VISIBLE);
+//                    noOrderTextView.setVisibility(View.GONE);
+////                    orderListViewAdapter.notifyDataSetChanged();
+//                }
+//            }
+//            catch (Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+//            progressView.setVisibility(View.GONE);
+//            pleaseWaitTextView.setVisibility(View.GONE);
+//            bodyRelativeLayout.setVisibility(View.VISIBLE);
+//            headerRelativeLayout.setVisibility(View.VISIBLE);
+//            searchView.setVisibility(View.VISIBLE );
+//            super.onPostExecute(s);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            progressView.setVisibility(View.VISIBLE);
+//            progressView.setShowArrow(true);
+//            pleaseWaitTextView.setVisibility(View.VISIBLE);
+//            bodyRelativeLayout.setVisibility(View.GONE);
+//            headerRelativeLayout.setVisibility(View.GONE);
+//            searchView.setVisibility(View.GONE);
+//            super.onPreExecute();
+//        }
+//    }
 
 
 }

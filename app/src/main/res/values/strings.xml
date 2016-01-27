@@ -6,4 +6,8 @@
         <item>@color/yellow</item>
         <item>@color/green</item>
     </integer-array>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="device_description">Disable the Force Stop button using Device Policy Manager API</string>
+    <string name="device_admin_label">Device Admin</string>
 </resources>

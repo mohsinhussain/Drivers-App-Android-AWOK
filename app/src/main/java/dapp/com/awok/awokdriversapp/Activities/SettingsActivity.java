@@ -108,12 +108,14 @@ public class SettingsActivity extends ActionBarActivity {
         }
         t_freq=(TextView)findViewById(R.id.txt_freq);
         frequency = getSharedPreferences(PREFS_FREQUENCY, 0);
-        txt_freq=frequency.getString(PREFS_TIME, null);
+//        txt_freq=frequency.getString(PREFS_TIME, null);
+        txt_freq = "120000";
         t_min_f = TimeUnit.MILLISECONDS.toSeconds(Long.parseLong(txt_freq));
         t_freq.setText(String.valueOf(t_min_f)+" Seconds");
         t_upfreq=(TextView)findViewById(R.id.txt_up_freq);
         update_frequency = getSharedPreferences(PREFS_UPDATE_FREQUENCY, 0);
-        txt_up_freq=update_frequency.getString(PREFS_UPDATE_TIME, null);
+//        txt_up_freq=update_frequency.getString(PREFS_UPDATE_TIME, null);
+        txt_up_freq="600000";
         t_min_uf = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(txt_up_freq));
         t_upfreq.setText(String.valueOf(t_min_uf)+" Minutes");
         sw=(Switch)findViewById(R.id.switch1);

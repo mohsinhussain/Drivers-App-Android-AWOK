@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class CallLogListAdapter extends BaseAdapter {
         TextView pd = (TextView) convertView.findViewById(R.id.phone_details);
         TextView duration = (TextView) convertView.findViewById(R.id.duration);
         TextView time = (TextView) convertView.findViewById(R.id.time);
-
+        RelativeLayout rowLayout = (RelativeLayout) convertView.findViewById(R.id.rowLayout);
         // getting movie data for the row
         CallLog m = call_items.get(position);
 
@@ -66,6 +67,13 @@ public class CallLogListAdapter extends BaseAdapter {
 
         // rating
         pd.setText(String.valueOf(m.getPhone()));
+
+        if(m.getDuration().equalsIgnoreCase("0")){
+            rowLayout.setBackgroundColor(activity.getResources().getColor(R.color.light_red));
+        }
+        else{
+            rowLayout.setBackgroundColor(activity.getResources().getColor(R.color.light_green));
+        }
 
        duration.setText(String.valueOf(m.getDuration())+" Seconds");
         time.setText(String.valueOf(m.getTime()));

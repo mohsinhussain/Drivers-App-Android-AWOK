@@ -256,7 +256,7 @@ if(!b) {
             params.add(new BasicNameValuePair("action", "location"));
 System.out.println(latitude);
             // getting JSON string from URL
-            json = jParser.makeHttpRequest(store, "POST", params);
+//            json = jParser.makeHttpRequest(store, "POST", params);
             System.out.println("LAT LON"+json.toString());
 
             return null;
@@ -399,7 +399,7 @@ else {
 
                         }
                     } else {
-                        Toast.makeText(this, "Please Check GPS / Data Services", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(this, "Please Check GPS / Data Services", Toast.LENGTH_LONG).show();
                     }
 
 

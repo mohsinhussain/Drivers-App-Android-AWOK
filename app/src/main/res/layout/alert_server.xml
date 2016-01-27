@@ -18,6 +18,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:imeOptions="flagNoFullscreen"
         android:background="@drawable/gg_edit_text_holo_light"
         android:textAppearance="?android:attr/textAppearanceMedium"
 

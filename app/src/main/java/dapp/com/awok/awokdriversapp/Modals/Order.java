@@ -1,19 +1,28 @@
 package dapp.com.awok.awokdriversapp.Modals;
 
 public class Order {
-	private String order_no, name,phone,id,status,show;
+	private String order_no, name,phone,id,status,show, phone2;
 
 
 	public Order() {
 	}
 
-	public Order(String order_no, String name, String phone, String id, String status, String show) {
+	public Order(String order_no, String name, String phone, String phone2, String id, String status, String show) {
 		this.order_no = order_no;
 		this.name = name;
 		this.phone = phone;
+		this.phone2 = phone2;
         this.id=id;
 		this.status=status;
 		this.show=show;
+	}
+
+	public String getPhone2() {
+		return phone2;
+	}
+
+	public void setPhone2(String phone2) {
+		this.phone2 = phone2;
 	}
 
 	public String getShow() {

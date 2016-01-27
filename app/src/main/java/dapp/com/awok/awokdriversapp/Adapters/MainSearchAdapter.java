@@ -40,6 +40,7 @@ import java.util.TimerTask;
 import dapp.com.awok.awokdriversapp.Activities.OrderDetailActivity;
 import dapp.com.awok.awokdriversapp.Modals.Order;
 import dapp.com.awok.awokdriversapp.R;
+import dapp.com.awok.awokdriversapp.Utils.Callbacks;
 
 /**
  * Created by shon on 8/19/2015.
@@ -50,10 +51,11 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
     private Context context;
     String CALL_LOG;
     String CALL_LOG_VALUE;
-    SharedPreferences call_log;
+    SharedPreferences call_log, completeLog;
     String store_phone, store_user, store_duration;
-    SharedPreferences.Editor call_log_value;
+    SharedPreferences.Editor call_log_value, completeLogEditor;
     ImageView iv;
+    String COMPLETE_CALL_LOG;
     Time time;
     String timez;
     List<Order> orderFilterList;
@@ -61,6 +63,13 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
     String strDate;
     SearchView searchView;
     private List<Order> orderList;
+    String orderNumber;
+    /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private Callbacks mCallbacks;
+
 
     public MainSearchAdapter(Activity activity, List<Order> orderList, Context context) {
         PhoneCallListener phoneListener = new PhoneCallListener();
@@ -69,6 +78,11 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         this.activity = activity;
         this.orderList = orderList;
         this.context = context;
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+        }
+
+        mCallbacks = (Callbacks) activity;
         this.searchView = searchView;
 //        searchView.setOnQueryTextListener(this);
         orderFilterList = orderList;
@@ -104,7 +118,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Order order = orderList.get(position);
+        final Order order = orderList.get(position);
 //        if( (order.getStatus().equalsIgnoreCase("O")&&fragmentPosition==0) || ((order.getStatus().equalsIgnoreCase("S")|| order.getStatus().equalsIgnoreCase("P"))&&fragmentPosition==1) ||
 //                (order.getStatus().equalsIgnoreCase("X")&&fragmentPosition==2) || (order.getStatus().equalsIgnoreCase("F")&&fragmentPosition==3)) {
 
@@ -117,6 +131,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         final TextView orderNumberTextView = (TextView) convertView.findViewById(R.id.orderNumberTextView);
         final TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
         TextView phoneTextView = (TextView) convertView.findViewById(R.id.phoneTextView);
+        TextView phoneTextView2 = (TextView) convertView.findViewById(R.id.phoneTextView2);
         final TextView id = (TextView) convertView.findViewById(R.id.id);
         final ImageView arrowImageView = (ImageView) convertView.findViewById(R.id.arrowImageView);
         final ImageView phoneImageView = (ImageView) convertView.findViewById(R.id.phoneImageView);
@@ -129,6 +144,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         orderNumberTextView.setText("# " + order.getOrder_no());
         nameTextView.setText(order.getName());
         phoneTextView.setText(order.getPhone());
+        phoneTextView2.setText(order.getPhone2());
         phoneImageView.setTag(order.getPhone());
         id.setText(order.getId());
         orderNumberTextView.setOnClickListener(new View.OnClickListener() {
@@ -138,25 +154,25 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
             }
         });
         iv = arrowImageView;
-        if (order.getStatus().equals("F")) {
+        if (order.getStatus().equals("DELIVERED")) {
             if (order.getShow().equals("true")) {
                 phoneImageView.setImageResource(R.drawable.jg);
                 phoneImageView.setEnabled(false);
 
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
                 categoryTextView.setText("Delivered");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
                 categoryLinearLayout.setVisibility(View.GONE);
             } else {
                 phoneImageView.setImageResource(R.drawable.jg);
                 phoneImageView.setEnabled(false);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
                 categoryLinearLayout.setVisibility(View.GONE);
             }
         }
 
 
-        if (order.getStatus().equals("O")) {
+        if (order.getStatus().equals("PENDING")) {
             if (order.getShow().equals("true")) {
                 phoneImageView.setImageResource(R.drawable.dd);
                 phoneImageView.setEnabled(true);
@@ -173,7 +189,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         }
 
 
-        if (order.getStatus().equals("X")) {
+        if (order.getStatus().equals("POSTPONED")) {
             if (order.getShow().equals("true")) {
                 phoneImageView.setImageResource(R.drawable.dd);
                 phoneImageView.setEnabled(true);
@@ -189,7 +205,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
             }
         }
 
-        if (order.getStatus().equals("S")) {
+        if (order.getStatus().equals("CANCELLED")) {
             if (order.getShow().equals("true")) {
                 phoneImageView.setImageResource(R.drawable.dd);
                 phoneImageView.setEnabled(true);
@@ -206,18 +222,18 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         }
 
 
-        if (order.getStatus().equals("P")) {
+        if (order.getStatus().equals("INVALID")) {
             if (order.getShow().equals("true")) {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
-                categoryTextView.setText("Canceled");
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                phoneImageView.setImageResource(R.drawable.jg);
+                phoneImageView.setEnabled(false);
+                categoryLinearLayout.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
+                categoryTextView.setText("Invalid");
+                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
                 categoryLinearLayout.setVisibility(View.GONE);
             } else {
-                phoneImageView.setImageResource(R.drawable.dd);
-                phoneImageView.setEnabled(true);
-                b1.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                phoneImageView.setImageResource(R.drawable.jg);
+                phoneImageView.setEnabled(false);
+                b1.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
                 categoryLinearLayout.setVisibility(View.GONE);
             }
         }
@@ -250,6 +266,8 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
                 System.out.println("ORDER" + orderNumberTextView.getText().toString());
                 CALL_LOG_VALUE = id.getText().toString();
                 CALL_LOG = id.getText().toString();
+                orderNumber = order.getOrder_no();
+                COMPLETE_CALL_LOG = "completeLog";
                 System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
                 store_phone = phoneImageView.getTag().toString();
                 store_user = nameTextView.getText().toString();
@@ -265,18 +283,21 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("ORDER" + phoneImageView.getTag().toString());
-                System.out.println("ORDER" + orderNumberTextView.getText().toString());
-                CALL_LOG_VALUE = id.getText().toString();
-                CALL_LOG = id.getText().toString();
-                System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
-                store_phone = phoneImageView.getTag().toString();
-                store_user = nameTextView.getText().toString();
-                Intent i = new Intent(context, OrderDetailActivity.class);
-                i.putExtra("order_main", id.getText().toString());
-                i.putExtra("display_order_id", orderNumberTextView.getText().toString());
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+                mCallbacks.
+                        onItemSelected(order);
+                v.setSelected(true);
+//                System.out.println("ORDER" + phoneImageView.getTag().toString());
+//                System.out.println("ORDER" + orderNumberTextView.getText().toString());
+//                CALL_LOG_VALUE = id.getText().toString();
+//                CALL_LOG = id.getText().toString();
+//                System.out.println("CALL_LOG_VALUE" + CALL_LOG_VALUE);
+//                store_phone = phoneImageView.getTag().toString();
+//                store_user = nameTextView.getText().toString();
+//                Intent i = new Intent(context, OrderDetailActivity.class);
+//                i.putExtra("order_main", id.getText().toString());
+//                i.putExtra("display_order_id", orderNumberTextView.getText().toString());
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
             }
         });
         return convertView;
@@ -315,9 +336,78 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
     private void store() {
 
 
+        completeLog = context.getSharedPreferences(COMPLETE_CALL_LOG, Context.MODE_APPEND);
         call_log = context.getSharedPreferences(CALL_LOG, Context.MODE_APPEND);
-        timez = strDate + " " + time.toString();
-        System.out.println(" fh" + timez);
+        timez=strDate+" "+time.toString();
+        System.out.println(" fh"+timez);
+
+        if(completeLog.contains(COMPLETE_CALL_LOG))
+        {
+            System.out.println("COMPLETE CALL LOG EXISTS");
+            String n = call_log.getString(COMPLETE_CALL_LOG, null);
+            System.out.println("Complete call log data"+n.toString());
+            try {
+                JSONObject lat_lon_object = new JSONObject(n);
+
+                JSONObject lat_lon_temp=new JSONObject();
+                lat_lon_temp.put("ONM", orderNumber);
+                lat_lon_temp.put("PHONE", store_phone);
+                lat_lon_temp.put("USER_NAME", store_user);
+                lat_lon_temp.put("DURATION", store_duration);
+                lat_lon_temp.put("TIME", timez.toString());
+//                lat_lon_temp.put("REPORTID", reportID);
+                /************
+                 * \
+                 * HERE HAVE TO ADD Order ID
+                 */
+                JSONArray latlon_array = lat_lon_object.getJSONArray("CALL_LOG");
+                latlon_array.put(lat_lon_temp);
+                System.out.println("Updated call log data: "+latlon_array.toString());
+
+
+
+
+                lat_lon_object.put("CALL_LOG", latlon_array);
+                completeLogEditor=completeLog.edit();
+                System.out.println("saveCALL_LOG_VALUE" + CALL_LOG_VALUE);
+                completeLogEditor.putString(COMPLETE_CALL_LOG, lat_lon_object.toString());
+                System.out.println("LATLON"+lat_lon_object.toString());
+                completeLogEditor.commit();
+                get_data();
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            System.out.println("DE");
+
+            try {
+                JSONObject lat_lon_object = new JSONObject();
+                JSONObject lat_lon_temp = new JSONObject();
+                lat_lon_temp.put("ONM", orderNumber);
+                lat_lon_temp.put("PHONE", store_phone);
+                lat_lon_temp.put("USER_NAME", store_user);
+                lat_lon_temp.put("DURATION", store_duration);
+                lat_lon_temp.put("TIME", timez.toString());
+//                lat_lon_temp.put("REPORTID", reportID);
+                JSONArray latlon_array=new JSONArray();
+                latlon_array.put(lat_lon_temp);
+                lat_lon_object.put("CALL_LOG", latlon_array);
+
+                completeLogEditor=completeLog.edit();
+                System.out.println("saveCALL_LOG_VALUE" + CALL_LOG_VALUE);
+                completeLogEditor.putString(COMPLETE_CALL_LOG, lat_lon_object.toString());
+                System.out.println("LATLON"+lat_lon_object.toString());
+                completeLogEditor.commit();
+//                get_data();
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         if (call_log.contains(CALL_LOG_VALUE)) {
             System.out.println(" EXIST");
             String n = call_log.getString(CALL_LOG_VALUE, null);
@@ -493,6 +583,7 @@ public class MainSearchAdapter extends BaseAdapter implements Filterable {
                                 .getOrder_no(), orderFilterList.get(i)
                                 .getName(), orderFilterList.get(i)
                                 .getPhone(), orderFilterList.get(i)
+                                .getPhone2(), orderFilterList.get(i)
                                 .getId(), orderFilterList.get(i)
                                 .getStatus(), orderFilterList.get(i)
                                 .getShow());

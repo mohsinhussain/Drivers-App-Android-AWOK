@@ -3,133 +3,66 @@
     android:orientation="vertical"
     android:id="@+id/main"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/order"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
+        android:background="#fff"
+        android:gravity="center_vertical"
+        android:id="@+id/order"
+        android:padding="16dp"
+        android:layout_height="wrap_content">
 
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-
-        android:background="#FF9933"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/quantityHeaderLayout"
+            android:textSize="14sp"
+            android:id="@+id/item_name"
+            android:text="Product"
+            android:layout_weight="1"
+            android:gravity="left" />
 
 
         <LinearLayout
+            android:id="@+id/quantityHeaderLayout"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_weight="7"
-            android:padding="1dp"
-            android:background="#dddddd"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:padding="1dp"
-                android:background="#FFFFFF"
-
-
-                android:layout_width="match_parent" android:layout_height="match_parent"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:textColor="#666666"
-                    android:padding="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/item_name" />
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:padding="1dp"
-            android:background="#dddddd"
-            android:layout_width="wrap_content" android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-            <LinearLayout
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="5dp"
-                android:background="#f3f3f3"
-                android:gravity="center_horizontal|center_vertical"
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/quantity">
+                android:layout_toLeftOf="@+id/quantityHeaderLayout"
+                android:textSize="14sp"
+                android:text="Qty"
+                android:id="@+id/order_quantity"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/quantityHeaderLayout"
+                android:textSize="14sp"
+                android:id="@+id/price"
+                android:text="Price"
+                android:layout_weight="1"
+                android:gravity="center" />
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="3"
-                    android:textColor="#3e3e3e"
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/order_quantity" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Pieces"
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/textView6" />
-            </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:padding="1dp"
-            android:background="#dddddd"
-            android:layout_width="wrap_content" android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-
-            <LinearLayout
-                android:layout_weight="1.5"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:background="#f3f3f3"
-                android:gravity="center_horizontal|center_vertical"
-                android:padding="5dp"
-                android:layout_height="match_parent">
-
-
-                <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="123"
-                    android:gravity="center_horizontal"
-                    android:textColor="#3e3e3e"
-                    android:id="@+id/price" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="AED"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/textView8" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
-
+    </RelativeLayout>
 
 
 
 
     <LinearLayout
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:background="#dddddd"
         android:id="@+id/bundle"
-        android:padding="1dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -138,12 +71,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:orientation="horizontal"
-
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
@@ -152,7 +88,6 @@
                     android:text="Bundle Includes:"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
                     android:id="@+id/bundle_inc" />
 
                 <ImageView
@@ -160,8 +95,6 @@
                     android:layout_height="25dp"
                     android:id="@+id/ex"
                     android:layout_weight="0.1"
-                    android:padding="5dp"
-
                     android:layout_marginRight="5dp"
                     android:src="@drawable/plus"
                     android:layout_gravity="right|center_vertical"  />
@@ -179,4 +112,11 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+    <View
+        android:background="#bbb"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        />
 </LinearLayout>

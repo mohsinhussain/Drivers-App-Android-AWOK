@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -136,10 +137,11 @@
                 <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="EMAIL ID / USERNAME"
                     android:inputType="text" android:maxLines="1"
-                    android:imeOptions="actionNext"
+                    android:imeOptions="actionNext|flagNoFullscreen"
                     android:textSize="14sp"
                     android:singleLine="true"
-                    android:background="@drawable/gg_edit_text_holo_light"
+                    android:padding="10dp"
+                    android:background="@drawable/edit_text_border_black"
                     android:layout_marginBottom="10dp"
                     android:textColorHint="#777"
                     android:textColor="#777" />
@@ -147,11 +149,12 @@
                 <EditText android:id="@+id/password" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="PASSWORD"
                     android:imeActionLabel="Login"
-                    android:imeOptions="actionDone" android:inputType="textPassword"
+                    android:imeOptions="actionDone|flagNoFullscreen" android:inputType="textPassword"
                     android:maxLines="1" android:singleLine="true"
                     android:layout_marginBottom="10dp"
                     android:textSize="14sp"
-                    android:background="@drawable/gg_edit_text_holo_light"
+                    android:padding="10dp"
+                    android:background="@drawable/edit_text_border_black"
                     android:textColorHint="#777"
                     android:textColor="#777" />
 
@@ -172,8 +175,8 @@ android:textAppearance="?android:attr/textAppearanceSmall"
 android:text="&#169; Copyright 2015 Awok.com, All Rights Reserved."
 
 android:id="@+id/copyrights"
-
-android:layout_gravity="bottom"
+android:gravity="center_horizontal"
+android:layout_gravity="bottom|center_horizontal"
 android:textColor="#979797" />
 
         </LinearLayout>

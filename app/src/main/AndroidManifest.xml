@@ -1,54 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dapp.com.awok.awokdriversapp">
+    package="dapp.com.awok.awokdriversapp" >
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <application android:allowBackup="true"
-        android:label="@string/app_name"
-        android:icon="@drawable/re" android:theme="@style/AppTheme">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.STORAGE" />
+    <application
+        android:name=".AppController"
+        android:allowBackup="true"
+        android:largeHeap="true"
+        android:icon="@drawable/re"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:windowSoftInputMode="adjustResize" >
         <activity
             android:name=".Activities.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:screenOrientation="landscape" >
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.SettingsActivity"
             android:label="title_activity_main_activity2"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".Activities.LoginActivity"
             android:label="title_activity_main_activity2"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme" >
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" >
+
         </activity>
-        <!--<activity
+        <!--
+        <activity
             android:name=".Three"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_three"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name=".Activities.CallLogActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="title_activity_three"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme" >
         </activity>
 
@@ -57,34 +66,87 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-       <!-- <service
+        <!--
+        <service
             android:name=".Upload_offline"
             android:enabled="true"
             android:exported="true" >
-        </service>-->
-       <!-- <service
+        </service>
+        -->
+        <!--
+        <service
             android:name=".GPSTracker"
             android:enabled="true"
             android:exported="true" >
-        </service>-->
-       <!-- <activity
+        </service>
+        -->
+        <!--
+        <activity
             android:name=".Details"
             android:label="title_activity_details" >
-        </activity>-->
+        </activity>
+        -->
 
         <activity
             android:name=".Activities.OrderDetailActivity"
-            android:screenOrientation="portrait"
-            android:label="title_activity_details" >
+            android:label="title_activity_details"
+            android:screenOrientation="landscape" >
         </activity>
-
-
 
         <service
             android:name=".Services.PushLocationDataToServerService"
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity
+            android:name=".Activities.ItemListActivity"
+            android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activities.ItemDetailActivity"
+            android:label="@string/title_item_detail"
+            android:configChanges="orientation|keyboardHidden"
+            android:parentActivityName=".Activities.ItemListActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dapp.com.awok.awokdriversapp.Activities.ItemListActivity" />
+        </activity>
+
+
+        <receiver
+            android:name=".Utils.DeviceAdminDemo"
+            android:description="@string/device_description"
+            android:label="@string/device_admin_label"
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/my_admin" />
+
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".Services.TService" >
+        </service>
+
+
     </application>
 
 </manifest>

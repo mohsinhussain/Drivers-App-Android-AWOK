@@ -51,7 +51,7 @@ public class LoginActivity extends Activity {
     public static final String APP_LOG_FNAME = "PREFS_APP_FNAME";
     public static final String APP_LOG_LNAME = "PREFS_APP_LNAME";
     public static final String APP_LOG_KEY = "PREFS_APP_KEY";
-    JSONObject json;
+    String json;
     String text_zy;
     Button b;
     TextView ne, signInTextView;
@@ -76,8 +76,8 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.lgin_main);
         server_pref = getSharedPreferences(PREFS_SERVER_NAME, 0);
         serv_txt=server_pref.getString(PREFS_SERVER_VALUE, null);
-        login="http://"+serv_txt+"/d_login.php";
-        store="http://"+serv_txt+"/d_login.php";
+        login=serv_txt+"login/";
+        store=serv_txt+"login/";
         get_id();
         log=(EditText)findViewById(R.id.email);
         pass=(EditText)findViewById(R.id.password);
@@ -93,7 +93,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                new up_off().execute();
+//                new up_off().execute();
             }
         });
 
@@ -159,49 +159,82 @@ public void check()
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("login", txt_log));
             params.add(new BasicNameValuePair("password", txt_pass));
-            params.add(new BasicNameValuePair("action", "login"));
-            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+//            params.add(new BasicNameValuePair("action", "login"));
+//            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
             json = jParser.makeHttpRequest(login, "POST", params);
-            System.out.println(json);
-            try {
-                product = json.getString("key");
-                System.out.println(product);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
+//            System.out.println(json);
+//            try {
+//                product = json.getString("message");
+//                System.out.println(product);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            return json;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if(product.equals("ude"))
-            {
-                Toast.makeText(getApplicationContext(), "User Does not Exist", Toast.LENGTH_LONG).show();
-            }
-            else if(product.equals("ip"))
-            {
-                Toast.makeText(getApplicationContext(), "Invalid Password", Toast.LENGTH_LONG).show();
-            }
-            else if(product.equals("nd"))
-            {
-                Toast.makeText(getApplicationContext(), "Not a Driver , Please Try Again", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                try {
-                    did=json.getString("did");
-                    key=json.getString("key");
-                    name=json.getString("name");
-                    lname=json.getString("lname");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            String message = "";
+            boolean status;
+            JSONObject response;
+            try {
+                response = new JSONObject(s);
+                status =  response.getBoolean("status");
+                message = response.getString("message");
+                if(status){
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                    JSONObject data =  response.getJSONObject("data");
+                    did=data.getString("did");
+                    key=data.getString("key");
+                    System.out.println("UserId: "+did+" Key: "+key);
+                    name=data.getString("name");
+                    lname=data.getString("lname");
+                    store();
                 }
-                store();
+                else{
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+
+                p1.setVisibility(View.GONE);
+                p.setVisibility(View.GONE);
+                signInTextView.setVisibility(View.VISIBLE);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                p1.setVisibility(View.GONE);
+                p.setVisibility(View.GONE);
+                signInTextView.setVisibility(View.VISIBLE);
             }
-            p1.setVisibility(View.GONE);
-            p.setVisibility(View.GONE);
-            signInTextView.setVisibility(View.VISIBLE);
-            super.onPostExecute(s);
+//            if()
+//
+//            if(product.equals("ude"))
+//            {
+//                Toast.makeText(getApplicationContext(), "User Does not Exist", Toast.LENGTH_LONG).show();
+//            }
+//            else if(product.equals("ip"))
+//            {
+//                Toast.makeText(getApplicationContext(), "Invalid Password", Toast.LENGTH_LONG).show();
+//            }
+//            else if(product.equals("nd"))
+//            {
+//                Toast.makeText(getApplicationContext(), "Not a Driver , Please Try Again", Toast.LENGTH_LONG).show();
+//            }
+//            else
+//            {
+//                try {
+//                    did=json.getString("did");
+//                    key=json.getString("key");
+//                    name=json.getString("name");
+//                    lname=json.getString("lname");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                store();
+//            }
+//            p1.setVisibility(View.GONE);
+//            p.setVisibility(View.GONE);
+//            signInTextView.setVisibility(View.VISIBLE);
+//            super.onPostExecute(s);
         }
 
         @Override
@@ -230,7 +263,7 @@ public void check()
         login_prefs_editor.commit();
         b.setEnabled(false);
         stopService(new Intent(LoginActivity.this,FetchLocationCordinatesService.class));
-        Intent i=new Intent(LoginActivity.this,MainActivity.class);
+        Intent i=new Intent(LoginActivity.this,ItemListActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         finish();
@@ -271,101 +304,101 @@ public void check()
         }
     }
 
-    private class up_off extends AsyncTask<String, String, String>
-    {
-        @Override
-        protected String doInBackground(String... paramz) {
-            isInternetPresent = cd.isConnectingToInternet();
-            if(isInternetPresent) {
-                String text;
-                latlon = getSharedPreferences(LATLON_PREFS, Context.MODE_PRIVATE);
-                text = latlon.getString(LATLON_PREFS_VALUE, null);
-                text_zy=text;
-                System.out.println("PREF_off" + text);
-
-                if (text==null)
-                {
-                    System.out.println("NO DATA SENT");
-                }
-                else
-                {
-                    try{
-                        JSONParser jParser = new JSONParser();
-                        List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("DID", txt_did));
-                        params.add(new BasicNameValuePair("OFF_LATLON", text.toString()));
-                        params.add(new BasicNameValuePair("action", "locationValueTextView"));
-                        params.add(new BasicNameValuePair("type", "off_data"));
-                        params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-                        json = jParser.makeHttpRequest(store, "POST", params);
-                        System.out.println("LAT LONghhghfhffffffffffffffffffffffff" + json.toString());
-                        latlon = getSharedPreferences(LATLON_PREFS, Context.MODE_PRIVATE);
-                        latlon_editor = latlon.edit(); //2
-                        latlon_editor.clear();
-                        latlon_editor.commit();
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "PLEASE CONNECT TO DATA SERVICES TO LOGOUT", Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            p1.setVisibility(View.VISIBLE);
-            p.setVisibility(View.VISIBLE);
-            signInTextView.setVisibility(View.GONE);
-            p1.bringToFront();
-            p.bringToFront();
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected void onPostExecute(String s) {
-            p1.setVisibility(View.GONE);
-            p.setVisibility(View.GONE);
-            signInTextView.setVisibility(View.VISIBLE);
-            if (text_zy==null)
-            {
-                System.out.println("NO DATA SENT");
-                login_prefs = getSharedPreferences(APP_LOGIN, 0); //1
-                login_prefs_editor = login_prefs.edit(); //2
-                login_prefs_editor.clear();
-                login_prefs_editor.commit();
-                stopService(new Intent(LoginActivity.this, FetchLocationCordinatesService.class));
-                Intent i = new Intent(LoginActivity.this, LoginActivity.class);
-                startActivity(i);
-            }
-            else {
-                try {
-                    String ja=json.getString("key");
-                    if(ja.equals("save"))
-                    {
-                        login_prefs = getSharedPreferences(APP_LOGIN, 0); //1
-                        login_prefs_editor = login_prefs.edit(); //2
-                        login_prefs_editor.clear();
-                        login_prefs_editor.commit();
-                        stopService(new Intent(LoginActivity.this, FetchLocationCordinatesService.class));
-                        Intent i = new Intent(LoginActivity.this, LoginActivity.class);
-                        startActivity(i);
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN LATER", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            super.onPostExecute(s);
-        }
-    }
+//    private class up_off extends AsyncTask<String, String, String>
+//    {
+//        @Override
+//        protected String doInBackground(String... paramz) {
+//            isInternetPresent = cd.isConnectingToInternet();
+//            if(isInternetPresent) {
+//                String text;
+//                latlon = getSharedPreferences(LATLON_PREFS, Context.MODE_PRIVATE);
+//                text = latlon.getString(LATLON_PREFS_VALUE, null);
+//                text_zy=text;
+//                System.out.println("PREF_off" + text);
+//
+//                if (text==null)
+//                {
+//                    System.out.println("NO DATA SENT");
+//                }
+//                else
+//                {
+//                    try{
+//                        JSONParser jParser = new JSONParser();
+//                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+//                        params.add(new BasicNameValuePair("DID", txt_did));
+//                        params.add(new BasicNameValuePair("OFF_LATLON", text.toString()));
+//                        params.add(new BasicNameValuePair("action", "locationValueTextView"));
+//                        params.add(new BasicNameValuePair("-", "off_data"));
+//                        params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
+//                        json = jParser.makeHttpRequest(store, "POST", params);
+//                        System.out.println("LAT LONghhghfhffffffffffffffffffffffff" + json.toString());
+//                        latlon = getSharedPreferences(LATLON_PREFS, Context.MODE_PRIVATE);
+//                        latlon_editor = latlon.edit(); //2
+//                        latlon_editor.clear();
+//                        latlon_editor.commit();
+//                    }
+//                    catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                Toast.makeText(getApplicationContext(), "PLEASE CONNECT TO DATA SERVICES TO LOGOUT", Toast.LENGTH_LONG).show();
+//            }
+//            return null;
+//        }
+//
+//
+//        @Override
+//        protected void onPreExecute() {
+//            p1.setVisibility(View.VISIBLE);
+//            p.setVisibility(View.VISIBLE);
+//            signInTextView.setVisibility(View.GONE);
+//            p1.bringToFront();
+//            p.bringToFront();
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            p1.setVisibility(View.GONE);
+//            p.setVisibility(View.GONE);
+//            signInTextView.setVisibility(View.VISIBLE);
+//            if (text_zy==null)
+//            {
+//                System.out.println("NO DATA SENT");
+//                login_prefs = getSharedPreferences(APP_LOGIN, 0); //1
+//                login_prefs_editor = login_prefs.edit(); //2
+//                login_prefs_editor.clear();
+//                login_prefs_editor.commit();
+//                stopService(new Intent(LoginActivity.this, FetchLocationCordinatesService.class));
+//                Intent i = new Intent(LoginActivity.this, LoginActivity.class);
+//                startActivity(i);
+//            }
+//            else {
+//                try {
+//                    String ja=json.getString("key");
+//                    if(ja.equals("save"))
+//                    {
+//                        login_prefs = getSharedPreferences(APP_LOGIN, 0); //1
+//                        login_prefs_editor = login_prefs.edit(); //2
+//                        login_prefs_editor.clear();
+//                        login_prefs_editor.commit();
+//                        stopService(new Intent(LoginActivity.this, FetchLocationCordinatesService.class));
+//                        Intent i = new Intent(LoginActivity.this, LoginActivity.class);
+//                        startActivity(i);
+//                    }
+//                    else
+//                    {
+//                        Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN LATER", Toast.LENGTH_LONG).show();
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            super.onPostExecute(s);
+//        }
+//    }
 }

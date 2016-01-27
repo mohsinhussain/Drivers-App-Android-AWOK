@@ -22,7 +22,7 @@
 
         <Button
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:text="Yes"
             android:textColor="#FFFFFF"
             android:background="#33cc33"
@@ -33,7 +33,7 @@
 
         <Button
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:text="No"
             android:textColor="#FFFFFF"
             android:background="#cccccc"

@@ -34,12 +34,12 @@ public class JSONParser {
 
 	// function get json from url
 	// by making HTTP POST or GET mehtod
-	public JSONObject makeHttpRequest(String url, String method,
+	public String makeHttpRequest(String url, String method,
 			List<NameValuePair> params) {
 
 		// Making HTTP request
 		try {
-			
+
 			// check for request method
 			if(method == "POST"){
 				// request method is POST
@@ -62,7 +62,9 @@ public class JSONParser {
 				HttpResponse httpResponse = httpClient.execute(httpGet);
 				HttpEntity httpEntity = httpResponse.getEntity();
 				is = httpEntity.getContent();
-			}			
+			}
+
+			System.out.println("URL: "+url);
 			
 
 		} catch (UnsupportedEncodingException e) {
@@ -83,6 +85,8 @@ public class JSONParser {
 			}
 			is.close();
 			json = sb.toString();
+
+			System.out.println("Response: "+json);
 		} catch (Exception e) {
 			Log.e("Buffer Error", "Error converting result " + e.toString());
 		}
@@ -95,7 +99,7 @@ public class JSONParser {
 		}
 
 		// return JSON String
-		return jObj;
+		return json;
 
 	}
 }

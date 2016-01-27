@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
@@ -46,7 +47,7 @@ public class OrderDetailActivity extends Activity {
     TextView orderDateValueTextView, customerNameValueTextView, mobileValueTextView, emirateValueTextView, locationValueTextView, addressValueTextView, totalPriceValueTextView, deliveryPriceValueTextView, nameOnCardValueTextView, cardNumberValueTextView;
     String s_order_date,s_cus_name,s_mobile,s_emirates,s_location,s_address,s_total_price,s_del_price,s_name_card,s_card_no,s_delivery,s_paid,s_number_card,ca2;
     LinearLayout container,container_bundle,temp;
-    JSONObject json,main_json;
+    String json,main_json;
     JSONArray order_list,cancel_list;
     String bu_namez,bu_name,bu_quantity,bu_price,order_main,dis_order_id;
     ImageView img_temp;
@@ -79,6 +80,13 @@ public class OrderDetailActivity extends Activity {
     public static final String PREFS_SERVER_NAME = "APP_SERVER_NAME";
     public static final String PREFS_SERVER_VALUE = "APP_SERVER_VALUE";
     SharedPreferences server_pref;
+    public static final String APP_LOGIN = "PREFS_APP_LOGIN";
+    public static final String APP_LOG_DID = "PREFS_APP_DID";
+    public static final String APP_LOG_KEY = "PREFS_APP_KEY";
+    public static final String APP_LOG_FNAME = "PREFS_APP_FNAME";
+    public static final String APP_LOG_LNAME = "PREFS_APP_LNAME";
+    SharedPreferences login_prefs;
+    SharedPreferences.Editor login_prefs_editor;
     String serv_txt;
 
 
@@ -89,7 +97,7 @@ public class OrderDetailActivity extends Activity {
         server_pref = getSharedPreferences(PREFS_SERVER_NAME, 0);
         serv_txt=server_pref.getString(PREFS_SERVER_VALUE, null);
         //validate="http://"+serv_txt+"/d_login.php";
-        url="http://"+serv_txt+"/d_login.php";
+        url=serv_txt+"details/";
         Intent myIntent = getIntent();
         order_main = myIntent.getStringExtra("order_main");
         dis_order_id = myIntent.getStringExtra("display_order_id");
@@ -285,12 +293,39 @@ public class OrderDetailActivity extends Activity {
 
         @Override
         protected void onPostExecute(String s) {
+
+            String message = "";
+            boolean status;
+            JSONObject response;
             try {
+                response = new JSONObject(s);
+                status =  response.getBoolean("status");
+                message = response.getString("message");
+                if(status){
+                    Toast.makeText(OrderDetailActivity.this, message, Toast.LENGTH_LONG).show();
+                    JSONObject data =  response.getJSONObject("data");
+//                    JSONObject orderObject = data.getJSONObject("orders");
+//                    System.out.println(json.toString());
+//                    System.out.println(main_json.toString());
+                    order_list = data.getJSONArray("ORDER_LIST");
+                    cancel_list=data.getJSONArray("CANCEL_REASON");
+                    s_order_date = data.getString("ORDER_DATE");
+                    s_cus_name = data.getString("ORDER_USER");
+                    s_mobile = data.getString("PHONE");
+                    s_emirates = data.getString("CITY");
+                    s_location = data.getString("AREA");
+                    s_address = data.getString("STREET");
+                    s_total_price = data.getString("TOTAL_PRICE");
+                    s_del_price = data.getString("DELIVERY_PRICE");
+                    s_name_card = data.getString("ORDER_DATE");
+                    s_card_no = data.getString("ORDER_DATE");
+                    s_delivery=data.getString("STATUS_ID");
+//                    s_paid=data.getString("CHECK_CARD");
+                    //s_name_card=main_json.getString()
+                    s_number_card=data.getString("PAYMENT_CARD");
+                    ca2=data.getString("COLLECT_PRICE");
 
-                if (json.equals("")) {
 
-                }
-                else {
                     orderDateValueTextView.setText(s_order_date);
                     customerNameValueTextView.setText(s_cus_name);
                     mobileValueTextView.setText(s_mobile);
@@ -328,14 +363,14 @@ public class OrderDetailActivity extends Activity {
                         amountTextView.setText(ca2 + " AED/= NCND- D/O Return");
                     }
 
-                    if(s_paid.equals("N"))
-                    {
-                        verificationLinearLayout.setVisibility(View.GONE);
-                    }
-                    else
-                    {
-
-                    }
+//                    if(s_paid.equals("N"))
+//                    {
+//                        verificationLinearLayout.setVisibility(View.GONE);
+//                    }
+//                    else
+//                    {
+//
+//                    }
 
                     if(s_delivery.equals("F"))
                     {
@@ -457,12 +492,16 @@ public class OrderDetailActivity extends Activity {
 
 
                     }
+
                 }
-            }
-            catch (Exception e)
-            {
+                else{
+                    Toast.makeText(OrderDetailActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             progressView.setVisibility(View.GONE);
             p.setVisibility(View.GONE);
             mainScrollView.setVisibility(View.VISIBLE);
@@ -481,40 +520,20 @@ public class OrderDetailActivity extends Activity {
         @Override
         protected String doInBackground(String... paramz) {
             JSONParser jParser = new JSONParser();
+            login_prefs = getSharedPreferences(APP_LOGIN, Context.MODE_PRIVATE);
+            String c_did = login_prefs.getString(APP_LOG_DID, null);
+            String c_key = login_prefs.getString(APP_LOG_KEY, null);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("order_id",order_main));
-            params.add(new BasicNameValuePair("action", "details"));
-            params.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
-            json = jParser.makeHttpRequest(url, "POST", params);
-            System.out.println(json.toString());
-            if (json.equals("")) {
-            } else {
-                try {
-                    main_json = json.getJSONObject("orders");
-                    System.out.println(json.toString());
-                    System.out.println(main_json.toString());
-                    order_list = main_json.getJSONArray("ORDER_LIST");
-                    cancel_list=main_json.getJSONArray("CANCEL_REASON");
-                    s_order_date = main_json.getString("ORDER_DATE");
-                    s_cus_name = main_json.getString("ORDER_USER");
-                    s_mobile = main_json.getString("PHONE");
-                    s_emirates = main_json.getString("CITY");
-                    s_location = main_json.getString("AREA");
-                    s_address = main_json.getString("STREET");
-                    s_total_price = main_json.getString("TOTAL_PRICE");
-                    s_del_price = main_json.getString("DELIVERY_PRICE");
-                    s_name_card = main_json.getString("ORDER_DATE");
-                    s_card_no = main_json.getString("ORDER_DATE");
-                    s_delivery=main_json.getString("STATUS_ID");
-                    s_paid=main_json.getString("CHECK_CARD");
-                    //s_name_card=main_json.getString()
-                    s_number_card=main_json.getString("PAYMENT_CARD");
-                    ca2=main_json.getString("COLLECT_PRICE");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
+            params.add(new BasicNameValuePair("did", c_did));
+            params.add(new BasicNameValuePair("key", c_key));
+//            params.add(new BasicNameValuePair("did", "546457"));
+//            params.add(new BasicNameValuePair("key", "gvJeU4Dh9372b18b77b7c704343fc55b2be4577c"));
+//            params.add(new BasicNameValuePair("oid",order_main));
+            params.add(new BasicNameValuePair("oid","404784147"));
+            json = jParser.makeHttpRequest(url, "GET", params);
+//            System.out.println(json.toString());
+
+            return json;
         }
     }
 
@@ -621,11 +640,11 @@ public class OrderDetailActivity extends Activity {
             params2.add(new BasicNameValuePair("action", "delivered"));
             params2.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
             json = jParser.makeHttpRequest(url, "POST", params2);
-            try {
-                txc=json.getString("key");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                txc=json.getString("key");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
     }
@@ -670,11 +689,11 @@ public class OrderDetailActivity extends Activity {
             json = jParser.makeHttpRequest(url, "POST", params2);
             System.out.println("POST"+json);
 
-            try {
-                txc=json.getString("key");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                txc=json.getString("key");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
     }
@@ -866,11 +885,11 @@ public class OrderDetailActivity extends Activity {
             params2.add(new BasicNameValuePair("can_val", ca_val));
             params2.add(new BasicNameValuePair("access", "1b6b1a4a42b9c9811e3ebc264080e465"));
             json = jParser.makeHttpRequest(url, "POST", params2);
-            try {
-                txc=json.getString("key");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                txc=json.getString("key");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
     }
